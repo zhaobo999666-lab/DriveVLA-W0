@@ -48,9 +48,13 @@ fetch_one() {
   log "done  $name  raw-camera=$(du -sh "$RGB" | cut -f1)  free=$(df -h "$S" | awk 'NR==2{print $4}')"
 }
 
-export -f fetch_one log
-export DL RGB MARK REL REPO REV LOG
+# docker exec 会清掉 BASH_FUNC_*，所以不能靠 export -f 把函数传进 xargs 的子 shell；
+# 改成用脚本自身当 worker。--one 分支在上面 FIRST/LAST 赋值之前就用 $2，不受影响。
+if [[ ${1:-} == --one ]]; then
+  fetch_one "$2"
+  exit $?
+fi
 
 log "start shards $FIRST..$LAST jobs=$JOBS"
-seq "$FIRST" "$LAST" | xargs -P "$JOBS" -I{} bash -c 'fetch_one {}'
+seq "$FIRST" "$LAST" | xargs -P "$JOBS" -I{} bash "$0" --one {}
 log "shards $FIRST..$LAST finished (check FAIL lines above)"
