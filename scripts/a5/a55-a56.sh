@@ -150,6 +150,15 @@ case "$MODE" in
     # 仓库 → release 的单向发布：训练只认 release，仓库是唯一真相源。
     # 用 tmp+mv 原子替换，避免覆盖其他节点正在执行的脚本（bash 按字节偏移续读会崩）。
     [[ -d "$REPO/.git" ]] || die "Project repo not found at $REPO"
+    # 本脚本自己也在受管清单里：release 副本落后时先换掉它再重跑，
+    # 否则这次 publish 用的还是旧清单（少发布会新加的文件）。
+    if [[ $(md5_of "$REPO/scripts/a5/a55-a56.sh") != $(md5_of "$RELEASE/a55-a56.sh") ]]; then
+      printf 'Launcher in the release is stale; refreshing it and re-running publish\n'
+      tmp="$RELEASE/.a55-a56.sh.tmp.$$"
+      install -m 0755 "$REPO/scripts/a5/a55-a56.sh" "$tmp"
+      mv -f "$tmp" "$RELEASE/a55-a56.sh"
+      exec bash "$RELEASE/a55-a56.sh" publish
+    fi
     rev=$(git -C "$REPO" rev-parse HEAD)
     dirty=$(git -C "$REPO" status --porcelain --untracked-files=no | wc -l)
     ((dirty == 0)) ||
