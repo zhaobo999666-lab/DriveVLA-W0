@@ -129,8 +129,8 @@ case "$MODE" in
       cand=$(ls -d /data1/zhaobo/drivevla-w0-* 2>/dev/null | head -1)
       [[ -n "$cand" ]] && { NODE=${cand##*/drivevla-w0-}; HOST="/data1/zhaobo/drivevla-w0-$NODE"; BOX="zhaobo-drivevla-$NODE"; }
     fi
-    busy=$(npu-smi info 2>/dev/null | grep -oE '[0-9]+ / [0-9]+' |
-      awk -F' / ' '$2+0 >= 16384 && $1+0 > 2048 {c++} END{print c+0}')
+    busy=$(npu-smi info 2>/dev/null | grep -oE '[0-9]+ +/ +[0-9]+' |
+      awk -F' +/ +' '$2+0 >= 16384 && $1+0 > 2048 {c++} END{print c+0}' || true)
     env_state=$(tail -1 "$HOST/manifests/prepare-environment.status" 2>/dev/null || echo MISSING)
     box=$(docker ps --filter "name=^${BOX}$" --format '{{.Status}}' 2>/dev/null || true)
     printf 'node=%-5s host=%-20s hccl=%-14s env=%-6s npu_busy=%s/8 container=%s\n' \
@@ -300,8 +300,8 @@ case "$MODE" in
     #   旧版（910B/24.x 之前）逐卡打印 "No running processes found in NPU"
     #   新版（25.1.rc2 / 950DT）只给 HBM 用量行 "59257 / 98304"，需按占用判断
     idle_markers=$(npu-smi info 2>/dev/null | grep -c 'No running processes found in NPU' || true)
-    busy=$(npu-smi info 2>/dev/null | grep -oE '[0-9]+ / [0-9]+' |
-      awk -F' / ' '$2+0 >= 16384 && $1+0 > 2048 {c++} END{print c+0}')
+    busy=$(npu-smi info 2>/dev/null | grep -oE '[0-9]+ +/ +[0-9]+' |
+      awk -F' +/ +' '$2+0 >= 16384 && $1+0 > 2048 {c++} END{print c+0}' || true)
     if [[ "$idle_markers" != 8 && "$busy" != 0 ]]; then
       die "NPU busy on $NODE: $busy/8 devices hold >2 GB HBM (another job, e.g. vLLM, is resident); wait or coordinate"
     fi
