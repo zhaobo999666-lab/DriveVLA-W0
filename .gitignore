@@ -122,3 +122,6 @@ AGENTS.md
 # Local agent state (Codex / WorkBuddy)
 .codex/
 .workbuddy/
+
+# Local build/deploy output (bundles, staged code copies)
+artifacts/
