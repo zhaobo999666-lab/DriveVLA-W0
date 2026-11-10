@@ -1,0 +1,130 @@
+{
+  "verified_date": "2026-11-09",
+  "resource_review_date": "2026-11-09",
+  "ssh_alias": "ott9-a55",
+  "owner_namespace": "zhaobo",
+  "host_root": "/data1/zhaobo/drivevla-w0-a55",
+  "container_root": "/work/zhaobo",
+  "shared_storage": {
+    "host_root": "/mnt/sfs_turbo/zhaobo/drivevla-w0",
+    "mounts": {
+      "models": "/work/zhaobo/models",
+      "downloads": "/work/zhaobo/downloads",
+      "data": "/work/zhaobo/data",
+      "artifacts": "/work/zhaobo/artifacts"
+    },
+    "verified_on_a55": "NFS mounted; zhaobo namespace writable; empty project directories created on 2026-11-09",
+    "local_only": ["bootstrap", "code", "tools", "scratch", "runs", "results", "cache", "envs", "manifests"],
+    "write_policy": "Prepare from one machine, verify before reuse; keep active checkpoints local and archive validated weights under models/trained"
+  },
+  "container_name": "zhaobo-drivevla-a55",
+  "tmux_session": "zhaobo-drivevla-a55",
+  "master_port": 29555,
+  "git": {
+    "url": "https://github.com/mingchang93/DriveVLA-W0.git",
+    "branch": "qwen3vl-backbone",
+    "commit": "2a87094e0ac52c425004eacdcced8734b3f68938",
+    "main_head_at_check": "a55766ce46ee55d9035b93816e57b8d933166482",
+    "main_has_qwen_launcher": false,
+    "a55_access": "git ls-remote timed out at 15s; use a bundle from the pinned local branch"
+  },
+  "base_image": {
+    "repository": "swr.cn-south-1.myhuaweicloud.com/ascendhub/cann",
+    "tag": "9.2.0-950-openeuler24.03-py3.12",
+    "platform": "linux/arm64",
+    "manifest_digest": "sha256:f81ad0b1f1e9b57e7859a334a9b63ba4444f6af1f0721e87300922627756ec1c",
+    "verification": "2026-11-09 A55 docker manifest inspect --verbose matched digest and linux/arm64; no image layers pulled"
+  },
+  "reference_images": {
+    "cluster_tag": "drivevla-w0:cann9.2.0-pytorch2.11.0-python3.12-a5",
+    "archive_configured_by_reference_deploy_script": "/mnt/sfs_turbo/zjj/images/drivevla-w0.tar",
+    "archive_status": "Configured path only; current existence and image origin not verified",
+    "public_candidate": "ascendai/torch-npu:2.11.0.post3-cann9.2.0-950-openeuler24.03-py3.12",
+    "public_candidate_source": "https://hub.docker.com/r/ascendai/torch-npu",
+    "public_candidate_status": "Publisher tag list verified; no A55 manifest check, pull, or equivalence claim; not used in this runbook"
+  },
+  "torch_npu": {
+    "version": "2.11.0.post3",
+    "wheel": "torch_npu-2.11.0.post3-cp312-cp312-manylinux_2_28_aarch64.whl",
+    "url": "https://files.pythonhosted.org/packages/8b/6d/92268dbc3290c0efd9f4d656c3ed61c7340c6a0c609c156b613347730001/torch_npu-2.11.0.post3-cp312-cp312-manylinux_2_28_aarch64.whl",
+    "sha256": "7d1284333a63671da1df222a1185f3997eafcaa533fe3d9e4aacad556eb27e04",
+    "verification": "PyPI metadata; wheel not installed or downloaded in this task"
+  },
+  "models": {
+    "qwen": {
+      "repo": "Qwen/Qwen2.5-VL-7B-Instruct",
+      "revision": "cc594898137f460bfe9f0759e9844b3ce807cfb5",
+      "local_dir": "/work/zhaobo/models/Qwen2.5-VL-7B-Instruct",
+      "train_flag": "--model_name_or_path"
+    },
+    "sd15": {
+      "repo": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "revision": "451f4fe16113bff5a5d2269ed5ad43b0592e9a14",
+      "include": [
+        "unet/config.json",
+        "unet/diffusion_pytorch_model.safetensors",
+        "vae/config.json",
+        "vae/diffusion_pytorch_model.safetensors",
+        "scheduler/scheduler_config.json",
+        "model_index.json"
+      ],
+      "local_dir": "/work/zhaobo/models/stable-diffusion-v1-5",
+      "train_flag": "--sd_model_path"
+    },
+    "fast_reference": {
+      "repo": "physical-intelligence/fast",
+      "revision": "ec4d7aa71691cac0b8bed6942be45684db2110f4",
+      "download_required": false,
+      "training_uses": "configs/fast from pinned git commit",
+      "train_flag": "--action_tokenizer_path"
+    }
+  },
+  "data": {
+    "repo": "OpenDriveLab/OpenScene",
+    "repo_type": "dataset",
+    "revision": "a76f840b65e972bc45e56c2adced897498e9a026",
+    "metadata": "openscene-v1.1/openscene_metadata_mini.tgz",
+    "camera_initial": "openscene-v1.1/openscene_sensor_mini_camera/openscene_sensor_mini_camera_0.tgz",
+    "camera_expand_pattern": "openscene-v1.1/openscene_sensor_mini_camera/openscene_sensor_mini_camera_{0..31}.tgz",
+    "archive_dir": "/work/zhaobo/downloads/openscene",
+    "train_flag_values": {
+      "--data_path": "/work/zhaobo/data/prepared/train.pkl",
+      "--data_root": "/work/zhaobo/data/raw-camera/openscene-v1.1/sensor_blobs/mini"
+    },
+    "pickle_strategy": "generate from raw logs, preserve frame token, split by log, normalize with training statistics only",
+    "verification": "paths/revision from mirror API and pinned download_mini.sh; archives not downloaded in this task"
+  },
+  "download": {
+    "canonical": "https://huggingface.co",
+    "a55_reachable_mirror_at_check": "https://hf-mirror.com",
+    "observed": "2026-11-09: pinned Qwen config.json HTTP 200 through mirror; canonical host connection timed out",
+    "dependency_indexes": "PyPI DeepSpeed index and PyTorch CPU torch index HTTP 200 from host",
+    "verification": "Small files and indexes only; no full model, archive or package download"
+  },
+  "emu3_reference": {
+    "launcher": "scripts/scripts_train/train_base_ar_withou_moe.sh",
+    "base_model": "BAAI/Emu3-Stage1",
+    "vision_tokenizer": "BAAI/Emu3-VisionTokenizer",
+    "documented_data_repo": "liyingyan/DriveVLA-W0",
+    "documented_files": [
+      "train_vq_codes.zip",
+      "test_vq_codes.zip",
+      "navsim_emu_vla_256_144_trainval_pre_1s.pkl",
+      "navsim_emu_vla_256_144_test_pre_1s.pkl"
+    ],
+    "status": "Separate route; documented data files not verified downloadable; not used in the A55 Qwen workflow"
+  },
+  "verification_boundary": "No new container build, full data download, training, NPU inference or PDMS run performed for this document. Device access is shared; path/container names do not reserve NPUs.",
+  "hccl_test_port": 29556,
+  "host_check": {
+    "hostname": "liteserver-a5-2-00001.novalocal",
+    "arch": "aarch64",
+    "host_os": "Huawei Cloud EulerOS 3.0",
+    "docker_server": "28.5.0",
+    "docker_root": "/data1/docker",
+    "data1": "Local ext4; 3.7 TiB available at check",
+    "npu": "8 x Ascend950DT, health OK; VLLMWorker_DP occupied all 8 at check",
+    "ports": "29555 and 29556 not listening at check; recheck before use",
+    "observed_at": "2026-11-09T10:03:20+08:00"
+  }
+}
