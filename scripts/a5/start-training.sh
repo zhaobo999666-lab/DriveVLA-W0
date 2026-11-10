@@ -8,9 +8,12 @@ MODE=${1:-train}
 
 usage() {
   cat <<'USAGE'
-Usage: bash start-training.sh [status|prepare|check|smoke|train] [run-id] [safe|fast] [batch] [qwen25|qwen3vl] [nodes=1|2]
+Usage: bash start-training.sh [status|publish|prepare|check|smoke|train] [run-id] [safe|fast] [batch] [qwen25|qwen3vl] [nodes=1|2]
 
   status   Print this node's health: env READY state, NPU busy devices, container, HCCL IP.
+  publish  Copy this node's repo (code/DriveVLA-W0) into the shared release dir, rewrite
+           REVISION, and diff every managed file. Runs always use the release copies, so
+           run this after every code change; check/smoke/train warn when it is stale.
   prepare  On the source node (A55): export its image. On any peer node: load it and verify.
   check    Verify HCCL: nodes=2 -> 16 ranks on both nodes; nodes=1 -> 8 ranks on this node.
   smoke    Train 3 steps without saving.
@@ -40,6 +43,9 @@ case "$MODE" in
   status)
     [[ $# -eq 1 ]] || { usage >&2; exit 2; }
     exec bash "$LAUNCHER" status ;;
+  publish)
+    [[ $# -eq 1 ]] || { usage >&2; exit 2; }
+    exec bash "$LAUNCHER" publish ;;
   prepare|check|smoke|train) ;;
   *) usage >&2; exit 2 ;;
 esac
