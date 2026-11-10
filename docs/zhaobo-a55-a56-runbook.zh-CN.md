@@ -76,6 +76,43 @@ ERROR: Repo /data1/... is at 9f8e7d6 but the release was published from a1b2c3d;
 默认只告警不拦（避免机器被别人临时占用时卡住），需要强一致时加 `ZB_STRICT_RELEASE=1`，把告警升级为失败。`prepare-a55.sh` 的期望提交也改成读同一个 `REVISION` 文件，不再各处硬编码。
 
 
+## 数据集：mini 学习子集 → trainval（2026-11-10 新增）
+
+默认 `data/prepared` 是 **OpenScene mini 的单个 log**（797 训练样本 / 16 验证样本），只够跑通链路与测步时。要真实规模的数据就换 trainval：
+
+| 包 | 体积 |
+| --- | --- |
+| `openscene_metadata_trainval.tgz` | 7.05 GB（全部 log 的 pkl） |
+| `openscene_sensor_trainval_camera_*.tgz` | 200 片共 **1242 GB**，单片 4.6–19.3 GB |
+
+实测 hf-mirror 带宽：单流 ≈3 MB/s，8 并发 ≈11 MB/s，16 并发 ≈29 MB/s。**40 片（≈250 GB）约 2–3 小时**，全量 200 片约 8–12 小时。
+
+三步走（都在任一节点上做，路径是共享盘，其他节点立即可见）：
+
+```bash
+cd /mnt/sfs_turbo/zhaobo/drivevla-w0/artifacts/code/a55-a56
+# 1) 元数据（约 10 分钟）
+docker exec zhaobo-drivevla-a52 env HF_ENDPOINT=https://hf-mirror.com HF_HUB_DISABLE_XET=1 \
+  hf download OpenDriveLab/OpenScene --repo-type dataset --include "openscene-v1.1/openscene_metadata_trainval.tgz" \
+  --local-dir /work/zhaobo/downloads/openscene --max-workers 8
+
+# 2) 相机分片：下载→解压→删 tgz，逐片落 marker，可断点续跑（后台跑，不受 ssh 断开影响）
+docker exec -d zhaobo-drivevla-a52 bash /work/zhaobo/artifacts/code/a55-a56/fetch-openscene-trainval.sh 0 39 12
+tail -f /data1/zhaobo/drivevla-w0-a52/manifests/fetch-openscene-trainval.log
+
+# 3) 预处理（同一个 dataset 模式，靠环境变量切分片与规模）
+ZB_SPLIT=trainval ZB_SHARDS="$(seq -s ' ' 0 39)" \
+ZB_MAX_TRAIN=200000 ZB_MAX_VAL=2000 ZB_PER_LOG_CAP=400 \
+  bash prepare-a55.sh dataset
+```
+
+产物落 `data/prepared-trainval/`（**不会覆盖** mini 的 `data/prepared`），`data_manifest.json` 里记录实际用到的 log 列表与样本数。
+
+`ZB_PER_LOG_CAP` 很关键：`support.py` 会逐帧解码图像做校验，全量 log 不设上限时既慢又吃内存。它是"每个 log 最多取多少样本"，0 表示不限（默认，保持 mini 行为不变）。
+
+训练侧怎么切到新数据：`train_qwen_vla_navsim.sh` 的 `--data_path` 现在由启动器写死 `/work/zhaobo/data/prepared/train.pkl`。换数据集时二选一——把 `prepared-trainval` 软链成 `prepared`（简单，但 mini 会被替换），或者给启动器加一个 `ZB_DATA=prepared-trainval` 的覆盖项（待做）。
+
+
 ## 机器池与配对：A52 / A53 / A54 任意两台（2026-11-10 起）
 
 A55/A56 已释放。当前可用的 A5 机器是一个**共享池**（其他同学也在排队用），因此启动器按"任意两台配对"设计，机器名不写死。

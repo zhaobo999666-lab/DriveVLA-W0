@@ -44,7 +44,7 @@ fetch_one() {
     return 1
   fi
   rm -f "$tgz"          # 图像已落盘，tgz 不保留，省一半空间
-  touch "$marker"
+  touch "$marker" "$MARK/extracted-$name"   # 第二个 marker 与 prepare-a55.sh 的约定对齐，避免它重复下载
   log "done  $name  raw-camera=$(du -sh "$RGB" | cut -f1)  free=$(df -h "$S" | awk 'NR==2{print $4}')"
 }
 
