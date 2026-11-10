@@ -21,6 +21,7 @@ set -euo pipefail
 
 ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+LAUNCH_ARGS=("$@")
 
 # ============================================================
 # Defaults
@@ -35,9 +36,13 @@ DATA_PATH=""
 DATA_ROOT=""
 DATASET_TYPE="navsim2va_ross"
 OUTPUT_DIR="$ROOT/logs/train_qwen_vla_$TIMESTAMP"
+OUTPUT_DIR_EXPLICIT=false
 EXP_NAME="navsim"
 
 NGPUS=8
+NNODES=1
+NODE_RANK=0
+MASTER_ADDR=127.0.0.1
 MASTER_PORT=23458
 BATCH_SIZE=64
 GRAD_ACCUM=1
@@ -107,7 +112,10 @@ Model:
   --dataset_type <s>           navsim2va_ross | nuplan2va_ross (default: $DATASET_TYPE)
 
 Training:
-  --ngpus <n>                  (8)
+  --ngpus <n>                  devices/processes per node (8)
+  --nnodes <n>                 number of nodes (1)
+  --node_rank <n>              zero-based node rank (0)
+  --master_addr <host>         reachable rank-0 address (127.0.0.1)
   --batch_size <n>             per-device batch, must be >= 2 (default: 64)
   --grad_accum <n>             (1)
   --num_workers <n>            (24)
@@ -174,9 +182,12 @@ while [[ $# -gt 0 ]]; do
     --data_path)             DATA_PATH="$2";               shift 2 ;;
     --data_root)             DATA_ROOT="$2";               shift 2 ;;
     --dataset_type)          DATASET_TYPE="$2";            shift 2 ;;
-    --output_dir)            OUTPUT_DIR="$2";              shift 2 ;;
+    --output_dir)            OUTPUT_DIR="$2"; OUTPUT_DIR_EXPLICIT=true; shift 2 ;;
     --exp_name)              EXP_NAME="$2";                shift 2 ;;
     --ngpus)                 NGPUS="$2";                   shift 2 ;;
+    --nnodes)                NNODES="$2";                  shift 2 ;;
+    --node_rank)             NODE_RANK="$2";               shift 2 ;;
+    --master_addr)           MASTER_ADDR="$2";             shift 2 ;;
     --master_port)           MASTER_PORT="$2";             shift 2 ;;
     --batch_size)            BATCH_SIZE="$2";              shift 2 ;;
     --grad_accum)            GRAD_ACCUM="$2";              shift 2 ;;
@@ -224,6 +235,21 @@ done
 # ============================================================
 # Validate inputs
 # ============================================================
+[[ "$NNODES" =~ ^[1-9][0-9]*$ ]] || die "--nnodes must be a positive integer"
+[[ "$NGPUS" =~ ^[1-9][0-9]*$ ]] || die "--ngpus must be a positive integer"
+[[ "$NODE_RANK" =~ ^(0|[1-9][0-9]*)$ ]] && (( NODE_RANK < NNODES )) ||
+  die "--node_rank must be in [0, --nnodes)"
+[[ "$MASTER_PORT" =~ ^[1-9][0-9]{0,4}$ ]] && (( MASTER_PORT <= 65535 )) ||
+  die "--master_port must be in [1, 65535]"
+[[ -n "$MASTER_ADDR" ]] || die "--master_addr cannot be empty"
+if (( NNODES > 1 )); then
+  case "$MASTER_ADDR" in
+    localhost|127.*|::1|0.0.0.0|::) die "multi-node requires a reachable --master_addr" ;;
+  esac
+  [[ "$OUTPUT_DIR_EXPLICIT" == true && "$OUTPUT_DIR" = /* ]] ||
+    die "multi-node requires the same explicit absolute --output_dir on all nodes (shared for checkpoints)"
+fi
+
 [ -n "$DATA_PATH" ]     || die "--data_path is required"
 [ -n "$DATA_ROOT" ]     || die "--data_root is required"
 [ -n "$SD_MODEL_PATH" ] || die "--sd_model_path is required"
@@ -366,11 +392,16 @@ PROF_FLAG=""; [ "$NPU_PROFILING" = true ] && PROF_FLAG="--npu_profiling --npu_pr
 
 RUN_DIR="$OUTPUT_DIR/$EXP_NAME"
 mkdir -p "$RUN_DIR"
+STARTUP_LOG="$RUN_DIR/startup_command.txt"
+if (( NNODES > 1 )); then
+  STARTUP_LOG="$RUN_DIR/startup_command.node${NODE_RANK}.txt"
+fi
 {
-  echo "$0 $*"
+  printf '%q ' "$0" "${LAUNCH_ARGS[@]}"
+  printf '\n'
   echo "Launch time: $(date)"
   echo "Host: $(hostname)"
-} > "$RUN_DIR/startup_command.txt"
+} > "$STARTUP_LOG"
 
 # ============================================================
 # Print config
@@ -384,7 +415,9 @@ echo "  action_tokenizer:      $ACTION_TOKENIZER_PATH"
 echo "  output:                $RUN_DIR"
 echo "  device / attn:         $DEVICE / $ATTN_TYPE"
 echo "  precision:             $FP"
-echo "  gpus x batch x accum:  ${NGPUS} x ${BATCH_SIZE} x ${GRAD_ACCUM}"
+echo "  nodes / rank:          $NNODES / $NODE_RANK"
+echo "  master:                $MASTER_ADDR:$MASTER_PORT"
+echo "  nodes x devices x batch x accum: ${NNODES} x ${NGPUS} x ${BATCH_SIZE} x ${GRAD_ACCUM}"
 echo "  max_steps / lr:        $MAX_STEPS / $LR"
 echo "  max_pixels:            $MAX_PIXELS  (target grid 10x18 = 180 tokens)"
 echo "  cur_frame_idx / fut:   $CUR_FRAME_IDX / $FUTURE_NUMS"
@@ -399,9 +432,9 @@ echo ""
 # ============================================================
 torchrun \
   --nproc_per_node="$NGPUS" \
-  --nnodes=1 \
-  --node_rank=0 \
-  --master_addr=127.0.0.1 \
+  --nnodes="$NNODES" \
+  --node_rank="$NODE_RANK" \
+  --master_addr="$MASTER_ADDR" \
   --master_port="$MASTER_PORT" \
   "$ROOT/utils/train_qwen_vla.py" \
     --model_name_or_path "$MODEL_NAME_OR_PATH" \
