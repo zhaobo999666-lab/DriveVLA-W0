@@ -118,3 +118,7 @@ debug_output/
 # Project-level instructions (local only)
 CLAUDE.md
 AGENTS.md
+
+# Local agent state (Codex / WorkBuddy)
+.codex/
+.workbuddy/
