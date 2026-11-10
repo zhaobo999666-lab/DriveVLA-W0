@@ -101,16 +101,34 @@ docker exec -d zhaobo-drivevla-a52 bash /work/zhaobo/artifacts/code/a55-a56/fetc
 tail -f /data1/zhaobo/drivevla-w0-a52/manifests/fetch-openscene-trainval.log
 
 # 3) 预处理（同一个 dataset 模式，靠环境变量切分片与规模）
+#    非 a55 节点（a52/a53…）跑 dataset 需显式给节点身份：prepare-a55.sh 自 2026-11-10 起
+#    允许 dataset/models 在 peer 节点执行（纯 CPU，不碰 NPU），environment 仍只能在 a55 做
+ZB_NODE=a52 ZB_EXPECTED_HOST=liteserver-a5-00002.novalocal \
 ZB_SPLIT=trainval ZB_SHARDS="$(seq -s ' ' 0 39)" \
 ZB_MAX_TRAIN=200000 ZB_MAX_VAL=2000 ZB_PER_LOG_CAP=400 \
-  bash prepare-a55.sh dataset
+  setsid nohup bash prepare-a55.sh dataset > /data1/zhaobo/drivevla-w0-a52/manifests/prepare-dataset.console.log 2>&1 < /dev/null &
+# 进度看 status / 日志（状态机 RUNNING <stage> → READY / FAILED exit=N）
+cat /data1/zhaobo/drivevla-w0-a52/manifests/prepare-dataset.status
+tail -f /data1/zhaobo/drivevla-w0-a52/manifests/prepare-dataset.console.log
 ```
 
 产物落 `data/prepared-trainval/`（**不会覆盖** mini 的 `data/prepared`），`data_manifest.json` 里记录实际用到的 log 列表与样本数。
 
 `ZB_PER_LOG_CAP` 很关键：`support.py` 会逐帧解码图像做校验，全量 log 不设上限时既慢又吃内存。它是"每个 log 最多取多少样本"，0 表示不限（默认，保持 mini 行为不变）。
 
-训练侧怎么切到新数据：`train_qwen_vla_navsim.sh` 的 `--data_path` 现在由启动器写死 `/work/zhaobo/data/prepared/train.pkl`。换数据集时二选一——把 `prepared-trainval` 软链成 `prepared`（简单，但 mini 会被替换），或者给启动器加一个 `ZB_DATA=prepared-trainval` 的覆盖项（待做）。
+**实测（2026-11-10 23:31–23:39，40 片 / 244 GB）**：212 个训练 log + 54 个验证 log，产出 **61 898 训练 / 2 000 验证**样本，pkl 共 64 MB，全程约 8 分钟。注意 `ZB_PER_LOG_CAP=400` 是实际瓶颈（212 log × 400 ≈ 85k 上限），所以 `ZB_MAX_TRAIN=200000` 没被吃满；要更多样本就调大 cap 或补更多分片。
+
+**坑（已修）**：`raw-logs/openscene-v1.1/meta_datas/` 下同时存在 `mini/` 和 `trainval/`，而 `support.py` 是 `rglob("*.pkl")` 递归扫描，会把同一个 log 扫两次并报 `ValueError: Duplicate raw log name`。现在 `prepare-a55.sh` 按 split 精确定位到 `meta_datas/<split>/`，找不到才退回 `raw-logs` 根。
+
+训练侧切到新数据：启动器已支持成对覆盖（**必须两个一起给**，pkl 里存的是相对路径，`data_root` 不匹配就会找不到图）：
+
+```bash
+export ZB_DATA=/work/zhaobo/data/prepared-trainval/train.pkl
+export ZB_DATA_ROOT=/work/zhaobo/data/raw-camera/openscene-v1.1/sensor_blobs/trainval
+bash a55-a56.sh smoke <run-id> fast 2 qwen3vl 1   # 先预演：ZB_DRYRUN=1 会打印实际数据路径
+```
+
+两者缺一即报错（`ZB_DATA` 没有配对的 `ZB_DATA_ROOT` 时启动器直接 die）。注意 `enter-env.sh` 里的 `RGB_ROOT` 仍指向 `sensor_blobs/mini`，不覆盖 `ZB_DATA_ROOT` 就会拿 trainval 的 pkl 去 mini 目录找图。
 
 
 ## 机器池与配对：A52 / A53 / A54 任意两台（2026-11-10 起）

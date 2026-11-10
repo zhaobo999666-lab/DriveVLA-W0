@@ -10,7 +10,10 @@ case "$NODE" in
   a55) EXPECTED_HOST=${EXPECTED_HOST:-liteserver-a5-2-00001.novalocal} ;;
   *)   # 其他节点（迁移后的 a52/a53 等）：peer 流程，必须显式给出预期主机名
        EXPECTED_HOST=${EXPECTED_HOST:?"peer node $NODE requires ZB_EXPECTED_HOST=<full hostname>"}
-       [[ "$MODE" == environment ]] || exit 2 ;;
+       # dataset/models 阶段是纯 CPU 的下载与 support.py 预处理（解包 + 生成 pkl），
+       # 不分配 NPU 张量，所以允许在 peer 节点上跑；environment 会重建容器并校验
+       # davinci 设备，仍只允许在 a55 上执行。
+       [[ "$MODE" == environment || "$MODE" == dataset || "$MODE" == models ]] || exit 2 ;;
 esac
 HOST="/data1/zhaobo/drivevla-w0-$NODE"
 SHARED=/mnt/sfs_turbo/zhaobo/drivevla-w0
@@ -208,8 +211,13 @@ for shard in $SHARDS; do
 done
 if [[ ! -d $RGB ]]; then printf 'Camera directory missing: %s\n' "$RGB"; exit 1; fi
 stage "generate train/val from $SPLIT (max_train=$MAX_TRAIN per_log_cap=$PER_LOG_CAP)"
+# metadata 解压后统一落在 raw-logs/openscene-v1.1/meta_datas/<split>/；多个 split 共存时
+# 从 raw-logs 根递归会把 mini 和 trainval 的同一 log 扫成两次（support.py 报 Duplicate
+# raw log name），所以按 split 精确定位，找不到再退回 raw-logs 根。
+LOGS="$DATA/raw-logs/openscene-v1.1/meta_datas/$SPLIT"
+[[ -d $LOGS ]] || LOGS="$DATA/raw-logs"
 tmp=$(mktemp -d "$DATA/.prepared.XXXXXX")
-if "$PY" "$SUPPORT" prepare --logs "$DATA/raw-logs" --rgb "$RGB" --out "$tmp" \
+if "$PY" "$SUPPORT" prepare --logs "$LOGS" --rgb "$RGB" --out "$tmp" \
     --max-train "$MAX_TRAIN" --max-val "$MAX_VAL" --per-log-cap "$PER_LOG_CAP" \
     > "$HOST/manifests/prepare-data-$SPLIT.log" 2>&1; then
   cat "$HOST/manifests/prepare-data-$SPLIT.log"

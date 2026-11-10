@@ -236,6 +236,14 @@ case "$MODE" in
     [[ "$MODEL" == qwen25 || "$MODEL" == qwen3vl ]] || die "Model must be qwen25 or qwen3vl (got '$MODEL')"
     NODES=${6:-${ZB_NODES:-2}}
     [[ "$NODES" == 1 || "$NODES" == 2 ]] || die "Nodes must be 1 or 2 (got '$NODES')"
+    # 数据路径覆盖（可选）：ZB_DATA 是容器内 pkl 绝对路径，ZB_DATA_ROOT 是对应的图片根目录。
+    # 两个必须成对出现 —— pkl 里存的是相对路径，data_root 不一致就会找不到图。
+    if [[ -n "${ZB_DATA:-}" ]]; then
+      [[ "${ZB_DATA}" == /* ]] || die "ZB_DATA must be an absolute in-container path (got '${ZB_DATA}')"
+      [[ -n "${ZB_DATA_ROOT:-}" ]] ||
+        die "ZB_DATA is set but ZB_DATA_ROOT is not; the pkl stores image paths relative to data_root"
+      [[ "${ZB_DATA_ROOT}" == /* ]] || die "ZB_DATA_ROOT must be an absolute in-container path (got '${ZB_DATA_ROOT}')"
+    fi
     if [[ "$NODES" == 1 ]]; then
       NODE_RANK=0; MASTER_ADDR=$HCCL_IP
     elif [[ "$NODE_RANK" == 0 ]]; then
@@ -292,6 +300,9 @@ case "$MODE" in
         "$NODE" "$NODE_RANK" "$HCCL_IP" "$MASTER_ADDR" "$port" "$NODES"
       printf '[dry-run] mode=%s run=%s profile=%s model=%s batch=%s pair=%s\n' \
         "$MODE" "$RUN_ID" "$PROFILE" "$MODEL" "$BATCH" "${PAIR:-none}"
+      printf '[dry-run] data_path=%s data_root=%s\n' \
+        "${ZB_DATA:-/work/zhaobo/data/prepared/train.pkl (default)}" \
+        "${ZB_DATA_ROOT:-RGB_ROOT from enter-env.sh (mini)}"
       printf '[dry-run] output=%s\n' "$OUT_HOST"
       exit 0
     fi
@@ -308,9 +319,9 @@ case "$MODE" in
     mkdir -p "$HOST/runs/a55-a56"
     docker exec -i "$BOX" bash --noprofile --norc -e -s -- \
       "$MODE" "$RUN_ID" "$NODE_RANK" "$MASTER_ADDR" "$port" "$HCCL_IP" "$PROFILE" "$BATCH" \
-      "$NODE" "$MODE" "$MODEL" "$NODES" <<'INSIDE' \
+      "$NODE" "$MODE" "$MODEL" "$NODES" "${ZB_DATA:-}" "${ZB_DATA_ROOT:-}" <<'INSIDE' \
       2>&1 | tee -a "$HOST/runs/a55-a56/$MODE-$RUN_ID-$PROFILE-$MODEL-b$BATCH-n$NODES.log"
-mode=$1 run_id=$2 rank=$3 master=$4 port=$5 hccl_ip=$6 profile=$7 batch=$8 node=$9 logmode=${10} model=${11} nodes=${12}
+mode=$1 run_id=$2 rank=$3 master=$4 port=$5 hccl_ip=$6 profile=$7 batch=$8 node=$9 logmode=${10} model=${11} nodes=${12} data=${13:-} data_root_override=${14:-}
 source /work/zhaobo/bootstrap/enter-env.sh
 export ASCEND_RT_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 export HCCL_SOCKET_IFNAME=enp39s0f3 HCCL_IF_IP="$hccl_ip" HCCL_CONNECT_TIMEOUT=120
@@ -344,12 +355,22 @@ if [[ "$model" == qwen3vl ]]; then
 else
   MODEL_PATH=/work/zhaobo/models/Qwen2.5-VL-7B-Instruct; MAXPX=150528
 fi
+# 数据路径：默认沿用 mini 调试集（enter-env.sh 的 RGB_ROOT 指向 sensor_blobs/mini）。
+# 跑 trainval 全量时用宿主机环境变量覆盖：
+#   ZB_DATA=/work/zhaobo/data/prepared-trainval/train.pkl
+#   ZB_DATA_ROOT=/work/zhaobo/data/raw-camera/openscene-v1.1/sensor_blobs/trainval
+# 两者必须同时给，否则 pkl 里的图片相对路径会指向 mini 目录、DataLoader 直接报找不到图。
+data_path=${data:-/work/zhaobo/data/prepared/train.pkl}
+data_root_path=${data_root_override:-${RGB_ROOT:-/work/zhaobo/data/raw-camera/openscene-v1.1/sensor_blobs/mini}}
+[[ -s "$data_path" ]] || { echo "ERROR: data_path missing or empty: $data_path (set ZB_DATA)" >&2; exit 1; }
+[[ -d "$data_root_path" ]] || { echo "ERROR: data_root directory missing: $data_root_path (set ZB_DATA_ROOT)" >&2; exit 1; }
 echo "[a55-a56] node=$node mode=$logmode profile=$profile model=$model batch=$batch nodes=$nodes attn=$ATTN ds=$(basename "$DS_CFG") pin=$PIN workers=$WORKERS max_pixels=$MAXPX"
+echo "[a55-a56] data_path=$data_path data_root=$data_root_path"
 bash scripts/scripts_train/train_qwen_vla_navsim.sh \
   --nnodes "$nodes" --node_rank "$rank" --master_addr "$master" --master_port "$port" --ngpus 8 \
   --model_name_or_path "$MODEL_PATH" \
   --sd_model_path /work/zhaobo/models/stable-diffusion-v1-5 \
-  --data_path /work/zhaobo/data/prepared/train.pkl --data_root "$RGB_ROOT" \
+  --data_path "$data_path" --data_root "$data_root_path" \
   --device npu --attn_type "$ATTN" --fp bf16 --batch_size "$batch" --grad_accum 1 \
   --max_pixels "$MAXPX" \
   --num_workers "$WORKERS" --pin_memory "$PIN" --deepspeed_config "$DS_CFG" \
@@ -372,5 +393,9 @@ INSIDE
          两台都 export ZB_PAIR=<配对ID>，并分别 export ZB_NODE=<短名> ZB_NODE_RANK=0/1；
          rank0 会把本机 IP 写到共享盘，rank1 自动读取，无需手抄 ZB_MASTER_ADDR。
        单机：nodes=1（或 ZB_NODES=1），忽略 ZB_NODE_RANK/ZB_MASTER_ADDR。
+       数据：默认 mini 调试集（/work/zhaobo/data/prepared/train.pkl + RGB_ROOT=mini）。
+         跑 trainval 全量必须成对覆盖（容器内绝对路径）：
+           export ZB_DATA=/work/zhaobo/data/prepared-trainval/train.pkl
+           export ZB_DATA_ROOT=/work/zhaobo/data/raw-camera/openscene-v1.1/sensor_blobs/trainval
        预演：ZB_DRYRUN=1 只打印解析出的配置，不校验 NPU/端口、不启动训练。" ;;
 esac
