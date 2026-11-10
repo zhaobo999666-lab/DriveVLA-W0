@@ -17,7 +17,10 @@ SHARED=/mnt/sfs_turbo/zhaobo/drivevla-w0
 WORK=/work/zhaobo
 IMAGE=zhaobo/drivevla-w0:a55-cann9.2-torch2.11-py312-v1
 BOX="zhaobo-drivevla-$NODE"
-REV=2a87094e0ac52c425004eacdcced8734b3f68938
+# 期望的代码提交以 release 的 REVISION 为唯一真相源（a55-a56.sh publish 写入）；
+# 文件缺失时退回初始部署的提交。ZB_REV 可显式覆盖。
+REVISION_FILE="$SHARED/artifacts/code/a55-a56/REVISION"
+REV=${ZB_REV:-$(cat "$REVISION_FILE" 2>/dev/null || printf '%s' 2a87094e0ac52c425004eacdcced8734b3f68938)}
 QREV=cc594898137f460bfe9f0759e9844b3ce807cfb5
 SDREV=451f4fe16113bff5a5d2269ed5ad43b0592e9a14
 DATAREV=a76f840b65e972bc45e56c2adced897498e9a026

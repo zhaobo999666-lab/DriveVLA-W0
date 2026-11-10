@@ -16,7 +16,65 @@
 | `qwen25`（默认） | Qwen2.5-VL-7B-Instruct | 150528 | real50-01~04 验证过的基线 |
 | `qwen3vl` | Qwen3-VL-8B-Instruct | 903168 | **npu-port 最佳点（L≈1774），与 `utils/flops_mindspeed.py` 口径完全一致，是性能优化任务的对照主路线** |
 
-代码部署在 `qwen3vl-backbone` 分支 `2a87094`（vendored transformers 含 `qwen3_vl` 与 `modeling_qwen3_vl_ross.py`），启动器默认已启用 npu-port 附录中保留的全部加速特性：`CPU_AFFINITY_CONF=1`、`expandable_segments:True`、`ROSS_STEP_TIMING=1`、valid-token CE、融合 RMSNorm+RoPE。
+代码部署在 `qwen3vl-backbone` 分支（当前生效的提交以共享盘 `artifacts/code/a55-a56/REVISION` 为准，`bash a55-a56.sh status` 会打印 `release=<rev> repo=<node>@<rev>`），vendored transformers 含 `qwen3_vl` 与 `modeling_qwen3_vl_ross.py`。启动器默认已启用 npu-port 附录中保留的全部加速特性：`CPU_AFFINITY_CONF=1`、`expandable_segments:True`、`ROSS_STEP_TIMING=1`、valid-token CE、融合 RMSNorm+RoPE。
+
+## 代码同步：仓库是真相源，release 是执行副本（2026-11-10 新增）
+
+同一份代码在三处存在，职责必须分清，否则会出现"改了代码但训练跑的是旧版"这种无声故障：
+
+| 位置 | 角色 |
+| --- | --- |
+| 本地工作区 `D:\OTT9\DriveVLA-W0` | 编辑与提交，`qwen3vl-backbone` 分支 |
+| 各机仓库 `/data1/zhaobo/drivevla-w0-<node>/code/DriveVLA-W0` | 只读镜像，必须与发布提交一致 |
+| 共享盘 `/mnt/sfs_turbo/zhaobo/drivevla-w0/artifacts/code/a55-a56` | **真正被执行的那份**（启动器强制 `HERE == RELEASE`，也只能从这里跑） |
+
+改完代码的标准流程（四步）：
+
+```bash
+# 1) 本机提交后打成增量 bundle（节点不必连 GitHub）
+git bundle create artifacts/code/a55-a56/qwen3vl-backbone-<rev>.bundle qwen3vl-backbone --not <上一个已发布 rev>
+scp artifacts/code/a55-a56/qwen3vl-backbone-<rev>.bundle ott9-a52:/tmp/
+ssh ott9-a52 'cp -f /tmp/qwen3vl-backbone-<rev>.bundle /mnt/sfs_turbo/zhaobo/drivevla-w0/artifacts/code/a55-a56/'
+
+# 2) 每台机器把仓库快进到该提交（分支已被 checkout 时不能直接 fetch 进同名分支）
+cd /data1/zhaobo/drivevla-w0-<node>/code/DriveVLA-W0
+git fetch /mnt/sfs_turbo/zhaobo/drivevla-w0/artifacts/code/a55-a56/qwen3vl-backbone-<rev>.bundle qwen3vl-backbone
+git merge --ff-only FETCH_HEAD
+
+# 3) 任一节点把仓库发布到 release（只需一台；内容相同的重复发布是幂等的）
+cd /mnt/sfs_turbo/zhaobo/drivevla-w0/artifacts/code/a55-a56
+bash a55-a56.sh publish
+# Publishing /data1/.../code/DriveVLA-W0@a1b2c3d -> /mnt/sfs_turbo/.../artifacts/code/a55-a56
+#   a55-a56.sh                         0755  <md5>
+#   ...
+# REVISION -> a1b2c3d...
+# publish OK (6 files)
+
+# 4) 体检一眼确认是否同步
+bash a55-a56.sh status
+# node=a52 ... container=Up
+# release=a1b2c3d repo=a52@a1b2c3d  sync=ok
+```
+
+`publish` 做的事：把 6 个受管文件（`a55-a56.sh`、`start-training.sh`、`check-hccl.py`、`train_qwen_vla_navsim.sh`、`prepare-a55.sh`、本 runbook）从本机仓库 `install` 到 release，逐个打印 md5，写 `REVISION`，缺 `DriveVLA-W0-<rev>.bundle` 时补一份完整包（供 `prepare-a55.sh` 冷启动克隆），最后再整体比对一次。替换用 `tmp+mv` 原子完成——直接覆盖会让正在执行的 bash 按字节偏移续读到错位内容。
+
+兜底校验：`check` / `smoke` / `train` 启动时都会比对 release 与仓库的 md5，不一致就打印
+
+```
+WARN: release/train_qwen_vla_navsim.sh differs from repo/scripts/scripts_train/train_qwen_vla_navsim.sh
+WARN: 1/6 release file(s) out of sync with /data1/.../DriveVLA-W0@a1b2c3d.
+WARN: the run uses the RELEASE copies, not the repo ones.
+WARN: refresh with: bash /mnt/.../a55-a56.sh publish
+```
+
+以及
+
+```
+ERROR: Repo /data1/... is at 9f8e7d6 but the release was published from a1b2c3d; run publish or check out the published revision
+```
+
+默认只告警不拦（避免机器被别人临时占用时卡住），需要强一致时加 `ZB_STRICT_RELEASE=1`，把告警升级为失败。`prepare-a55.sh` 的期望提交也改成读同一个 `REVISION` 文件，不再各处硬编码。
+
 
 ## 机器池与配对：A52 / A53 / A54 任意两台（2026-11-10 起）
 
@@ -28,7 +86,7 @@ A55/A56 已释放。当前可用的 A5 机器是一个**共享池**（其他同�
 | A53 | liteserver-a5-00003 | 10.0.16.231 | ✅ READY，容器 `zhaobo-drivevla-a53` |
 | A54 | liteserver-a5-00004 | 10.0.16.118 | ✅ READY，容器 `zhaobo-drivevla-a54` |
 
-三台两两互 ping 全通；三台环境已全部初始化（镜像 load、5 项挂载、`REV=2a87094`、torch_npu/deepspeed/diffusers、`zero2.json` 与 `zero3_offload.json` 均在）。
+三台两两互 ping 全通；三台环境已全部初始化（镜像 load、5 项挂载、torch_npu/deepspeed/diffusers、`zero2.json` 与 `zero3_offload.json` 均在），代码仓库已随 `publish` 快进到 `REVISION` 记录的提交（见上一节）。
 
 **只支持 1 台或 2 台**（`nodes=1|2`），不支持三机同跑——本项目的并行策略按 8 卡/节点 × 1~2 节点设计。
 

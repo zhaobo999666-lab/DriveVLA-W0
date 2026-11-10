@@ -17,8 +17,8 @@ infer_node() {
 }
 MODE=${1:-}
 case "$MODE" in
-  ''|export-image|prepare-peer|check|smoke|train|status) ;;
-  *) die "Unknown mode '$MODE' (export-image|prepare-peer|check|smoke|train|status)" ;;
+  ''|publish|export-image|prepare-peer|check|smoke|train|status) ;;
+  *) die "Unknown mode '$MODE' (publish|export-image|prepare-peer|check|smoke|train|status)" ;;
 esac
 NODE=""; NODE_RANK=""
 case "$(hostname -s)" in
@@ -34,14 +34,14 @@ NODES=${6:-${ZB_NODES:-2}}
 if [[ "$NODES" == 1 ]]; then
   NODE_RANK=0
 fi
-# status 只是本机体检，未配 rank 也能跑
-if [[ "$MODE" == status ]]; then
+# status/publish 只是本机操作（体检、把仓库发布到 release），未配 rank 也能跑
+if [[ "$MODE" == status || "$MODE" == publish ]]; then
   NODE_RANK=${NODE_RANK:-0}
 fi
 [[ -n "$NODE_RANK" ]] ||
   die "Unknown rank; set ZB_NODE_RANK=<0|1> (single-node: ZB_NODES=1)"
 HCCL_IP=$(ip -o -4 addr show dev enp39s0f3 2>/dev/null | awk '{sub(/\/.+$/,"",$4); print $4; exit}')
-[[ -n "$HCCL_IP" || "$MODE" == status ]] || die "No IPv4 address on enp39s0f3"
+[[ -n "$HCCL_IP" || "$MODE" == status || "$MODE" == publish ]] || die "No IPv4 address on enp39s0f3"
 MASTER_ADDR=${ZB_MASTER_ADDR:-}
 if [[ "$NODE_RANK" == 0 ]]; then
   MASTER_ADDR=$HCCL_IP
@@ -54,7 +54,10 @@ BOX="zhaobo-drivevla-$NODE"
 IMAGE=zhaobo/drivevla-w0:a55-cann9.2-torch2.11-py312-v1
 RELEASE="$SHARED/artifacts/code/a55-a56"
 EXPORT="$SHARED/artifacts/images/a55-qwen-v1"
-REV=2a87094e0ac52c425004eacdcced8734b3f68938
+REPO="$HOST/code/DriveVLA-W0"
+# release 目录里记录「这份副本来自哪个提交」，由 publish 写入；缺失时退回初始部署的提交
+REVISION_FILE="$RELEASE/REVISION"
+REV_DEFAULT=2a87094e0ac52c425004eacdcced8734b3f68938
 RUNS="$SHARED/artifacts/runs/a55-a56"
 PAIR=${ZB_PAIR:-}
 PAIR_DIR=""
@@ -66,6 +69,57 @@ fi
 mountpoint -q /mnt/sfs_turbo || die "Shared filesystem is not mounted"
 mountpoint -q /data1 || die "/data1 is not mounted"
 [[ "$HERE" == "$RELEASE" ]] || die "Run the launcher from $RELEASE"
+
+# ============================================================
+# release 副本与仓库的对应关系
+#   仓库 <repo 相对路径>  ->  release <文件名>  <权限>
+# 训练真正执行的是 release 里的副本（本脚本就只能在 release 目录运行），
+# 所以「仓库改了但忘记发布」会让训练悄悄跑旧代码 —— 用下面的 md5 校验兜住。
+# ============================================================
+MANAGED=(
+  "scripts/a5/a55-a56.sh:a55-a56.sh:0755"
+  "scripts/a5/start-training.sh:start-training.sh:0755"
+  "scripts/a5/check-hccl.py:check-hccl.py:0644"
+  "scripts/scripts_train/train_qwen_vla_navsim.sh:train_qwen_vla_navsim.sh:0755"
+  "docs/zhaobo-a55/prepare-a55.sh:prepare-a55.sh:0755"
+  "docs/zhaobo-a55-a56-runbook.zh-CN.md:zhaobo-a55-a56-runbook.zh-CN.md:0644"
+)
+
+md5_of() { md5sum "$1" 2>/dev/null | awk '{print $1}'; }
+
+release_revision() {
+  if [[ -s "$REVISION_FILE" ]]; then cat "$REVISION_FILE"; else printf '%s' "$REV_DEFAULT"; fi
+}
+repo_revision() { git -C "$REPO" rev-parse HEAD 2>/dev/null || printf 'missing'; }
+short_rev() { local r=${1:-unknown}; printf '%s' "${r:0:7}"; }
+
+# 逐文件比对 release 与仓库工作区；不一致 → 告警（ZB_STRICT_RELEASE=1 时直接失败）
+verify_release() {
+  local spec src dst mode bad=0 total=0
+  for spec in "${MANAGED[@]}"; do
+    IFS=: read -r src dst mode <<<"$spec"
+    total=$((total + 1))
+    if [[ ! -f "$REPO/$src" ]]; then
+      printf 'WARN: repo file missing: %s\n' "$REPO/$src" >&2; bad=$((bad + 1)); continue
+    fi
+    if [[ ! -f "$RELEASE/$dst" ]]; then
+      printf 'WARN: release file missing: %s\n' "$RELEASE/$dst" >&2; bad=$((bad + 1)); continue
+    fi
+    if [[ $(md5_of "$REPO/$src") != $(md5_of "$RELEASE/$dst") ]]; then
+      printf 'WARN: release/%s differs from repo/%s\n' "$dst" "$src" >&2
+      bad=$((bad + 1))
+    fi
+  done
+  if ((bad > 0)); then
+    printf 'WARN: %d/%d release file(s) out of sync with %s@%s.\n' \
+      "$bad" "$total" "$REPO" "$(short_rev "$(repo_revision)")" >&2
+    printf 'WARN: the run uses the RELEASE copies, not the repo ones.\n' >&2
+    printf 'WARN: refresh with: bash %s publish\n' "$0" >&2
+    if [[ "${ZB_STRICT_RELEASE:-0}" == 1 ]]; then
+      die "stale release (ZB_STRICT_RELEASE=1)"
+    fi
+  fi
+}
 
 case "$MODE" in
   status)
@@ -80,6 +134,47 @@ case "$MODE" in
     box=$(docker ps --filter "name=^${BOX}$" --format '{{.Status}}' 2>/dev/null || true)
     printf 'node=%-5s host=%-20s hccl=%-14s env=%-6s npu_busy=%s/8 container=%s\n' \
       "$NODE" "$(hostname -s)" "${HCCL_IP:--}" "${env_state##* }" "$busy" "${box:-none}"
+    repo="$HOST/code/DriveVLA-W0"
+    printf 'release=%s repo=%s@%s' "$(short_rev "$(release_revision)")" "$NODE" \
+      "$(short_rev "$(git -C "$repo" rev-parse HEAD 2>/dev/null || printf missing)")"
+    out_of_sync=0
+    for spec in "${MANAGED[@]}"; do
+      IFS=: read -r src dst _ <<<"$spec"
+      [[ -f "$repo/$src" && -f "$RELEASE/$dst" ]] || { out_of_sync=$((out_of_sync + 1)); continue; }
+      [[ $(md5_of "$repo/$src") == $(md5_of "$RELEASE/$dst") ]] || out_of_sync=$((out_of_sync + 1))
+    done
+    if ((out_of_sync == 0)); then printf '  sync=ok\n'; else printf '  sync=STALE(%d) run publish\n' "$out_of_sync"; fi
+    ;;
+  publish)
+    # 仓库 → release 的单向发布：训练只认 release，仓库是唯一真相源。
+    # 用 tmp+mv 原子替换，避免覆盖其他节点正在执行的脚本（bash 按字节偏移续读会崩）。
+    [[ -d "$REPO/.git" ]] || die "Project repo not found at $REPO"
+    rev=$(git -C "$REPO" rev-parse HEAD)
+    dirty=$(git -C "$REPO" status --porcelain --untracked-files=no | wc -l)
+    ((dirty == 0)) ||
+      printf 'WARN: %s has %d uncommitted tracked change(s); publishing the working tree, not commit %s\n' \
+        "$REPO" "$dirty" "$(short_rev "$rev")" >&2
+    printf 'Publishing %s@%s -> %s\n' "$REPO" "$(short_rev "$rev")" "$RELEASE"
+    for spec in "${MANAGED[@]}"; do
+      IFS=: read -r src dst mode <<<"$spec"
+      [[ -f "$REPO/$src" ]] || die "Missing source: $REPO/$src"
+      tmp="$RELEASE/.$dst.tmp.$$"
+      install -m "$mode" "$REPO/$src" "$tmp"
+      mv -f "$tmp" "$RELEASE/$dst"
+      printf '  %-34s %s  %s\n' "$dst" "$mode" "$(md5_of "$RELEASE/$dst")"
+    done
+    printf '%s\n' "$rev" > "$REVISION_FILE.tmp.$$"
+    mv -f "$REVISION_FILE.tmp.$$" "$REVISION_FILE"
+    printf 'REVISION -> %s\n' "$rev"
+    # prepare-a55.sh 从 DriveVLA-W0-<rev>.bundle 冷启动克隆，缺了就先补一份完整包
+    full_bundle="$SHARED/artifacts/code/DriveVLA-W0-$rev.bundle"
+    if [[ ! -s "$full_bundle" ]]; then
+      git -C "$REPO" bundle create "$full_bundle.tmp.$$" refs/heads/qwen3vl-backbone >/dev/null
+      mv -f "$full_bundle.tmp.$$" "$full_bundle"
+      printf 'bundle   -> %s\n' "$full_bundle"
+    fi
+    verify_release
+    printf 'publish OK (%d files)\n' "${#MANAGED[@]}"
     ;;
   export-image)
     [[ "$NODE" == a55 ]] || die "Export the image on A55"
@@ -119,6 +214,7 @@ case "$MODE" in
     ZB_NODE="$NODE" ZB_EXPECTED_HOST="$(hostname)" ZB_EXPECTED_IMAGE_ID="$expected" bash "$HERE/prepare-a55.sh" environment
     ;;
   check|smoke|train)
+    verify_release
     RUN_ID=${2:-}
     PROFILE=${3:-safe}
     BATCH=${4:-2}
@@ -167,7 +263,9 @@ case "$MODE" in
         die "fast profile: run 'bash a55-a56.sh smoke <id> $PROFILE $BATCH $MODEL $NODES' on this node first"
     fi
     grep -q ' READY$' "$HOST/manifests/prepare-environment.status" || die "Environment not ready on $NODE"
-    [[ $(git -C "$HOST/code/DriveVLA-W0" rev-parse HEAD) == "$REV" ]] || die "Unexpected project revision"
+    # 仓库必须停在 release 发布时记录的那个提交；不一致说明有人改了代码没发布
+    [[ $(repo_revision) == "$(release_revision)" ]] ||
+      die "Repo $REPO is at $(short_rev "$(repo_revision)") but the release was published from $(short_rev "$(release_revision)"); run publish or check out the published revision"
     [[ $(docker inspect --format '{{.HostConfig.NetworkMode}}' "$BOX") == host ]] ||
       die "Container must use host networking"
     ip -o -4 addr show dev enp39s0f3 | grep -Fq " $HCCL_IP/" || die "enp39s0f3 address changed during run"
@@ -215,7 +313,7 @@ if [[ "$mode" == check ]]; then
   exit 1
 fi
 mkdir -p /work/zhaobo/artifacts/runs/a55-a56 /work/zhaobo/runs/a55-a56
-install -m 0644 "$release/train_qwen_vla_navsim.sh" ./scripts/scripts_train/train_qwen_vla_navsim.sh
+install -m 0755 "$release/train_qwen_vla_navsim.sh" ./scripts/scripts_train/train_qwen_vla_navsim.sh
 steps=50; warmup=5; save=true
 if [[ "$mode" == smoke ]]; then steps=3; warmup=0; save=false; fi
 # 档位（对照 npu-port.zh-CN.md 附录）：
@@ -255,7 +353,11 @@ fi
 exit $rc
 INSIDE
     ;;
-  *) die "Usage: bash $0 status | export-image | prepare-peer | {check|smoke|train} <run-id> [safe|fast] [batch] [qwen25|qwen3vl] [nodes=1|2]
+  *) die "Usage: bash $0 status | publish | export-image | prepare-peer | {check|smoke|train} <run-id> [safe|fast] [batch] [qwen25|qwen3vl] [nodes=1|2]
+       publish：把本机仓库（$REPO）的文件发布到共享盘 release 目录并记录 REVISION，
+          release 与仓库的 md5 逐个比对，不一致直接报错。训练真正执行的是 release 副本，
+          所以**每次改完代码都要先在任一节点跑 publish**；check/smoke/train 启动时会自动
+          比对 md5，release 落后于仓库就告警（ZB_STRICT_RELEASE=1 则直接失败）。
        双机配对（任意两台 A5，例如 A52+A53）：
          两台都 export ZB_PAIR=<配对ID>，并分别 export ZB_NODE=<短名> ZB_NODE_RANK=0/1；
          rank0 会把本机 IP 写到共享盘，rank1 自动读取，无需手抄 ZB_MASTER_ADDR。
