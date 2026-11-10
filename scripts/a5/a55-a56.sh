@@ -82,6 +82,7 @@ MANAGED=(
   "scripts/a5/check-hccl.py:check-hccl.py:0644"
   "scripts/scripts_train/train_qwen_vla_navsim.sh:train_qwen_vla_navsim.sh:0755"
   "docs/zhaobo-a55/prepare-a55.sh:prepare-a55.sh:0755"
+  "docs/zhaobo-a55/support.py:support.py:0644"
   "docs/zhaobo-a55-a56-runbook.zh-CN.md:zhaobo-a55-a56-runbook.zh-CN.md:0644"
 )
 

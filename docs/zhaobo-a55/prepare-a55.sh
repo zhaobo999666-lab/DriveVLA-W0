@@ -159,16 +159,31 @@ PY
 )
 exit 0
 fi
-stage 'prepare fixed OpenScene mini logs and camera shards'
+# 数据集划分：mini（默认，单 log 学习子集）或 trainval（全量）；用 ZB_SHARDS 控制下多少片
+SPLIT=${ZB_SPLIT:-mini}
+SHARDS=${ZB_SHARDS:-}
+MAX_TRAIN=${ZB_MAX_TRAIN:-2048}
+MAX_VAL=${ZB_MAX_VAL:-16}
+PER_LOG_CAP=${ZB_PER_LOG_CAP:-0}
+case "$SPLIT" in
+  mini)     [[ -n $SHARDS ]] || SHARDS="0 1 2" ;;
+  trainval) [[ -n $SHARDS ]] || SHARDS=$(seq -s ' ' 0 39) ;;
+  *)        [[ -n $SHARDS ]] || { printf 'Set ZB_SHARDS for split %s\n' "$SPLIT" >&2; exit 2; } ;;
+esac
 DL="$SHARED/downloads/openscene"
 DATA="$SHARED/data"
-RGB="$DATA/raw-camera/openscene-v1.1/sensor_blobs/mini"
-if [[ -s $DATA/prepared/data_manifest.json ]]; then
-  for file in train.pkl val.pkl norm_stats.json train_tokens.yaml val_tokens.yaml; do test -s "$DATA/prepared/$file"; done
+RGB="$DATA/raw-camera/openscene-v1.1/sensor_blobs/$SPLIT"
+PREP="$DATA/prepared"
+[[ "$SPLIT" == mini ]] || PREP="$DATA/prepared-$SPLIT"
+# 预处理脚本以 release 副本为准（发布时一起同步），缺失时退回 bootstrap 里的旧副本
+SUPPORT=${ZB_SUPPORT:-$SHARED/artifacts/code/a55-a56/support.py}
+[[ -f $SUPPORT ]] || SUPPORT="$HOST/bootstrap/support.py"
+if [[ ${ZB_REPREPARE:-0} != 1 && -s "$PREP/data_manifest.json" ]]; then
+  for file in train.pkl val.pkl norm_stats.json train_tokens.yaml val_tokens.yaml; do test -s "$PREP/$file"; done
   test -d "$RGB"
   exit 0
 fi
-test ! -e "$DATA/prepared"
+stage "prepare OpenScene $SPLIT metadatas and camera shards"
 download_extract() {
   local rel=$1 dest=$2 marker="$HOST/manifests/extracted-${1##*/}"
   if [[ -f $marker ]]; then return 0; fi
@@ -185,21 +200,24 @@ PY
   tar --no-same-owner --no-same-permissions -xzf "$DL/$rel" -C "$dest"
   touch "$marker"
 }
-download_extract openscene-v1.1/openscene_metadata_mini.tgz "$DATA/raw-logs"
-for shard in 0 1 2; do
-  stage "download and unpack OpenScene camera shard $shard"
-  download_extract "openscene-v1.1/openscene_sensor_mini_camera/openscene_sensor_mini_camera_$shard.tgz" "$DATA/raw-camera"
-  if [[ ! -d $RGB ]]; then printf 'Camera directory missing: %s\n' "$RGB"; exit 1; fi
-  stage "generate train/val with shards 0..$shard"
-  tmp=$(mktemp -d "$DATA/.prepared.XXXXXX")
-  if "$PY" "$HOST/bootstrap/support.py" prepare --logs "$DATA/raw-logs" --rgb "$RGB" \
-      --out "$tmp" --max-train 2048 --max-val 16 > "$HOST/manifests/prepare-data.log" 2>&1; then
-    cat "$HOST/manifests/prepare-data.log"
-    mv -T -n "$tmp" "$DATA/prepared"
-    test ! -e "$tmp"
-    exit 0
-  fi
-  cat "$HOST/manifests/prepare-data.log"
-  grep -Eq 'Need >=2 image-complete logs|Degenerate action quantiles|Empty train/validation split' "$HOST/manifests/prepare-data.log" || exit 1
+download_extract "openscene-v1.1/openscene_metadata_$SPLIT.tgz" "$DATA/raw-logs"
+for shard in $SHARDS; do
+  stage "download and unpack OpenScene $SPLIT camera shard $shard"
+  download_extract "openscene-v1.1/openscene_sensor_${SPLIT}_camera/openscene_sensor_${SPLIT}_camera_$shard.tgz" "$DATA/raw-camera" ||
+    printf 'WARN: shard %s failed, continuing with the shards already unpacked\n' "$shard" >&2
 done
+if [[ ! -d $RGB ]]; then printf 'Camera directory missing: %s\n' "$RGB"; exit 1; fi
+stage "generate train/val from $SPLIT (max_train=$MAX_TRAIN per_log_cap=$PER_LOG_CAP)"
+tmp=$(mktemp -d "$DATA/.prepared.XXXXXX")
+if "$PY" "$SUPPORT" prepare --logs "$DATA/raw-logs" --rgb "$RGB" --out "$tmp" \
+    --max-train "$MAX_TRAIN" --max-val "$MAX_VAL" --per-log-cap "$PER_LOG_CAP" \
+    > "$HOST/manifests/prepare-data-$SPLIT.log" 2>&1; then
+  cat "$HOST/manifests/prepare-data-$SPLIT.log"
+  if [[ -e $PREP ]]; then mv -T "$PREP" "$PREP.bak-$(date +%Y%m%d-%H%M%S)"; fi
+  mv -T "$tmp" "$PREP"
+  printf 'Prepared dataset: %s\n' "$PREP"
+  exit 0
+fi
+cat "$HOST/manifests/prepare-data-$SPLIT.log"
+grep -Eq 'Need >=2 image-complete logs|Degenerate action quantiles|Empty train/validation split' "$HOST/manifests/prepare-data-$SPLIT.log" || exit 1
 exit 1

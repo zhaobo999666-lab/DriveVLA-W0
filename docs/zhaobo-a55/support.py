@@ -46,7 +46,10 @@ def prepare(args):
             c, s = math.cos(poses[i, 2]), math.sin(poses[i, 2])
             motion[i] = [c*dx+s*dy, -s*dx+c*dy, (dyaw+math.pi)%(2*math.pi)-math.pi]
         samples = []
+        cap = getattr(args, "per_log_cap", 0) or 0
         for i in range(5, len(frames)-10):
+            if cap and len(samples) >= cap:
+                break
             if len(frames[i].get("roadblock_ids", [])) == 0:
                 continue
             cur, prev = list(range(i-3, i+9)), list(range(i-5, i+7))
@@ -222,6 +225,9 @@ def main():
     p.add_argument("--logs", required=True); p.add_argument("--rgb", required=True)
     p.add_argument("--out", required=True)
     p.add_argument("--max-train", type=int, default=2048); p.add_argument("--max-val", type=int, default=64)
+    # 每个 log 最多取多少样本（0 = 不限）。全量 trainval 有上千个 log，
+    # 不设上限时既慢又吃内存；提前截断还能跳过后续帧的图像解码校验。
+    p.add_argument("--per-log-cap", type=int, default=0)
     p.set_defaults(func=prepare)
     p = sub.add_parser("patch-inference")
     p.add_argument("--repo", required=True); p.add_argument("--out", required=True); p.set_defaults(func=patch)
