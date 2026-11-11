@@ -86,6 +86,10 @@ if [[ $MODE == environment ]]; then
     docker run -d --name "$BOX" --label owner=zhaobo --network host --shm-size=16g \
       --ulimit memlock=-1:-1 --ulimit stack=67108864 "${devices[@]}" "${mounts[@]}" \
       --mount type=bind,src=/usr/local/Ascend/driver,dst=/usr/local/Ascend/driver,readonly \
+      --mount type=bind,src=/usr/local/Ascend/firmware,dst=/usr/local/Ascend/firmware \
+      --mount type=bind,src=/usr/local/dcmi,dst=/usr/local/dcmi,readonly \
+      --mount type=bind,src=/usr/local/sbin/npu-smi,dst=/usr/local/sbin/npu-smi \
+      --mount type=bind,src=/usr/bin/hccn_tool,dst=/usr/bin/hccn_tool \
       --mount type=bind,src=/etc/ascend_install.info,dst=/etc/ascend_install.info,readonly \
       "$IMAGE" sleep infinity
   fi
