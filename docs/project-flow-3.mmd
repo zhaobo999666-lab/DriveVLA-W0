@@ -1,0 +1,18 @@
+flowchart TD
+    P[pickle 中的一个 scene] --> OLD[前1秒窗口]
+    P --> CUR[当前窗口]
+    OLD --> V1[导航文本 + 历史视觉 VQ + 历史运动]
+    CUR --> V2[导航文本 + 当前视觉 VQ + 历史运动]
+    OLD --> A1[前时刻动作段 FAST 编码]
+    CUR --> A2[当前未来动作段 FAST 编码]
+    V1 --> SEQ[按时序拼接输入 token]
+    A1 --> SEQ
+    V2 --> SEQ
+    A2 --> SEQ
+    SEQ --> PAD[Padding + attention mask]
+    SEQ --> LAB[Label mask<br/>视觉与动作目标按配置保留]
+    PAD --> MODEL[Emu3 主干或动作专家]
+    LAB --> LOSS[对应 CE / FM MSE / L1 / Anchor 损失]
+    MODEL --> LOSS
+    CUR --> CONT[连续 action、pre_action、cmd<br/>按模型接口传入]
+    CONT --> MODEL

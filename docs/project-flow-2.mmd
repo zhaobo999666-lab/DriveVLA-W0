@@ -1,0 +1,20 @@
+flowchart LR
+    SH[scripts/pretrain<br/>scripts/scripts_train] --> E{Python 入口}
+    E --> M[utils/train_moe.py]
+    E --> A[utils/train_ar.py]
+    E --> F[utils/train_pi0.py]
+    E --> Q[utils/train_qformer.py]
+    D[utils/datasets.py<br/>pickle + VQ + FAST + masks] --> M
+    D --> A
+    D --> F
+    D --> Q
+    M --> MM[Emu3MoE]
+    A --> AM[Emu3AutoRegressive]
+    F --> FM[Emu3Pi0]
+    Q --> QM[Emu3QFormer]
+    MM --> CORE[reference/Emu3/emu3/mllm/modeling_emu3.py]
+    AM --> CORE
+    FM --> CORE
+    QM --> CORE
+    SCH[models/policy_head/noise_schedulers.py] --> FM
+    CORE --> TR[HF Trainer + DeepSpeed<br/>反向传播、评估、断点保存]

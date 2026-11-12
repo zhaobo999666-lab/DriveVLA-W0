@@ -1,0 +1,19 @@
+flowchart TD
+    C[图像、命令与历史运动上下文] --> T{动作输出路线}
+    T --> AR[基础 AR / 独立 AR / Qwen]
+    AR --> TOK[逐 token 生成 FAST 编码]
+    TOK --> DEC[FAST IDCT 解码]
+    T --> FM[Emu3Pi0]
+    FM --> RAND[初始化高斯动作噪声]
+    RAND --> ITER[动作专家预测速度场并迭代]
+    ITER --> FC[连续动作]
+    T --> Q[Emu3QFormer]
+    Q --> AQ[Learnable queries 与状态 token]
+    AQ --> ANC{Anchor 开关}
+    ANC -->|关闭| REG[一次前向回归连续动作]
+    ANC -->|开启| RANK[候选轨迹编码、评分、选择]
+    DEC --> RES[反归一化与输出格式整理]
+    FC --> RES
+    REG --> RES
+    RES --> J[场景 JSON]
+    RANK --> AJ[候选轨迹 JSON<br/>遵循对应 Anchor 坐标与数值约定]

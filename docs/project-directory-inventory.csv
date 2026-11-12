@@ -1,0 +1,1086 @@
+﻿directory,owner,function,direct_files,recursive_files,recursive_python_files
+.cursor,local tooling,编辑器计划记录,0,1,0
+.cursor/plans,local tooling,编辑器计划记录,1,1,0
+.idea,local tooling,IDE 项目配置,6,7,0
+.idea/inspectionProfiles,local tooling,IDE 项目配置,1,1,0
+.workbuddy,local tooling,本地协作工具记录,0,1,0
+.workbuddy/memory,local tooling,本地协作工具记录,1,1,0
+assets,project,项目方法示意图,1,1,0
+configs,project,模型结构、动作 tokenizer 与归一化配置,2,12,1
+configs/fast,project,FAST 动作序列 DCT/BPE 编解码与词表,7,7,1
+configs/normalizer_navsim_test,project,NAVSIM 测试集动作归一化统计,1,1,0
+configs/normalizer_navsim_trainval,project,NAVSIM 训练集动作归一化统计,1,1,0
+configs/normalizer_nuplan,project,NuPlan 动作归一化统计,1,1,0
+docs,project,项目架构、原理与设计记录,3,4,0
+docs/superpowers,project,项目架构、原理与设计记录,0,1,0
+docs/superpowers/specs,project,项目架构、原理与设计记录,1,1,0
+inference,project,上级模块的组织目录,0,189,108
+inference/navsim,vendored NAVSIM,内嵌 NAVSIM 评估工程，详细职责见主报告 3.12,0,176,102
+inference/navsim/navsim,vendored NAVSIM,内嵌 NAVSIM 评估工程，详细职责见主报告 3.12,16,176,102
+inference/navsim/navsim/assets,vendored NAVSIM,内嵌 NAVSIM 评估工程，详细职责见主报告 3.12,3,3,0
+inference/navsim/navsim/docs,vendored NAVSIM,内嵌 NAVSIM 评估工程，详细职责见主报告 3.12,7,7,0
+inference/navsim/navsim/download,vendored NAVSIM,内嵌 NAVSIM 评估工程，详细职责见主报告 3.12,6,6,0
+inference/navsim/navsim/navsim,vendored NAVSIM,内嵌 NAVSIM 评估工程，详细职责见主报告 3.12,1,132,97
+inference/navsim/navsim/navsim/agents,vendored NAVSIM,Agent 接口、JSON 轨迹接入与基线,7,14,14
+inference/navsim/navsim/navsim/agents/transfuser,vendored NAVSIM,Transfuser 基线特征、模型、损失和回调,7,7,7
+inference/navsim/navsim/navsim/common,vendored NAVSIM,场景、轨迹、传感器数据类与加载,4,4,4
+inference/navsim/navsim/navsim/evaluate,vendored NAVSIM,轨迹变换、插值、仿真与 PDMS,2,2,2
+inference/navsim/navsim/navsim/planning,vendored NAVSIM,内嵌 NAVSIM 评估工程，详细职责见主报告 3.12,1,105,70
+inference/navsim/navsim/navsim/planning/metric_caching,vendored NAVSIM,指标缓存构建与加载,5,5,5
+inference/navsim/navsim/navsim/planning/scenario_builder,vendored NAVSIM,仿真场景适配,3,3,3
+inference/navsim/navsim/navsim/planning/script,vendored NAVSIM,训练、缓存、评估、提交任务入口与配置,9,56,21
+inference/navsim/navsim/navsim/planning/script/builders,vendored NAVSIM,Worker、planner、simulation、observation 构建,5,5,5
+inference/navsim/navsim/navsim/planning/script/config,vendored NAVSIM,训练、缓存、评估、提交任务入口与配置,1,42,7
+inference/navsim/navsim/navsim/planning/script/config/common,vendored NAVSIM,训练、缓存、评估、提交任务入口与配置,3,30,3
+inference/navsim/navsim/navsim/planning/script/config/common/agent,vendored NAVSIM,Agent 类型与参数,6,6,0
+inference/navsim/navsim/navsim/planning/script/config/common/train_test_split,vendored NAVSIM,数据划分与场景 token 过滤,8,16,1
+inference/navsim/navsim/navsim/planning/script/config/common/train_test_split/scene_filter,vendored NAVSIM,数据划分与场景 token 过滤,8,8,1
+inference/navsim/navsim/navsim/planning/script/config/common/worker,vendored NAVSIM,顺序、线程池和 Ray worker 配置,5,5,1
+inference/navsim/navsim/navsim/planning/script/config/metric_caching,vendored NAVSIM,指标缓存任务配置,2,2,1
+inference/navsim/navsim/navsim/planning/script/config/pdm_scoring,vendored NAVSIM,PDMS 与提交评分任务配置,6,6,1
+inference/navsim/navsim/navsim/planning/script/config/training,vendored NAVSIM,NAVSIM 基线训练配置,3,3,1
+inference/navsim/navsim/navsim/planning/simulation,vendored NAVSIM,内嵌 NAVSIM 评估工程，详细职责见主报告 3.12,1,33,33
+inference/navsim/navsim/navsim/planning/simulation/planner,vendored NAVSIM,内嵌 NAVSIM 评估工程，详细职责见主报告 3.12,1,32,32
+inference/navsim/navsim/navsim/planning/simulation/planner/pdm_planner,vendored NAVSIM,内嵌 NAVSIM 评估工程，详细职责见主报告 3.12,4,31,31
+inference/navsim/navsim/navsim/planning/simulation/planner/pdm_planner/observation,vendored NAVSIM,占用地图、交通对象与观测,4,4,4
+inference/navsim/navsim/navsim/planning/simulation/planner/pdm_planner/proposal,vendored NAVSIM,候选轨迹生成与 IDM 策略,4,4,4
+inference/navsim/navsim/navsim/planning/simulation/planner/pdm_planner/scoring,vendored NAVSIM,碰撞、道路、进度、TTC 和舒适性评分,4,4,4
+inference/navsim/navsim/navsim/planning/simulation/planner/pdm_planner/simulation,vendored NAVSIM,LQR、自行车运动学与批量仿真,5,5,5
+inference/navsim/navsim/navsim/planning/simulation/planner/pdm_planner/utils,vendored NAVSIM,几何、路径、路线和数据表示,7,10,10
+inference/navsim/navsim/navsim/planning/simulation/planner/pdm_planner/utils/graph_search,vendored NAVSIM,Dijkstra 与道路块 BFS,3,3,3
+inference/navsim/navsim/navsim/planning/training,vendored NAVSIM,NAVSIM 基线 Dataset、LightningModule 与回调,4,5,5
+inference/navsim/navsim/navsim/planning/training/callbacks,vendored NAVSIM,NAVSIM 基线 Dataset、LightningModule 与回调,1,1,1
+inference/navsim/navsim/navsim/planning/utils,vendored NAVSIM,内嵌 NAVSIM 评估工程，详细职责见主报告 3.12,0,2,2
+inference/navsim/navsim/navsim/planning/utils/multithreading,vendored NAVSIM,并行 worker 辅助,2,2,2
+inference/navsim/navsim/navsim/visualization,vendored NAVSIM,BEV、轨迹、相机与 LiDAR 绘制,6,6,6
+inference/navsim/navsim/scripts,vendored NAVSIM,内嵌 NAVSIM 评估工程，详细职责见主报告 3.12,0,11,0
+inference/navsim/navsim/scripts/evaluation,vendored NAVSIM,内嵌 NAVSIM 评估工程，详细职责见主报告 3.12,7,7,0
+inference/navsim/navsim/scripts/submission,vendored NAVSIM,内嵌 NAVSIM 评估工程，详细职责见主报告 3.12,2,2,0
+inference/navsim/navsim/scripts/training,vendored NAVSIM,内嵌 NAVSIM 评估工程，详细职责见主报告 3.12,2,2,0
+inference/navsim/navsim/tutorial,vendored NAVSIM,内嵌 NAVSIM 评估工程，详细职责见主报告 3.12,1,1,0
+inference/qwen,project,Qwen2.5-VL 动作 token 生成,2,2,1
+inference/vla,project,Emu3 各模型动作推理、配置与评估启动,11,11,5
+models,project,上级模块的组织目录,0,7,6
+models/policy_head,project,Flow Matching 调度和实验策略组件,4,4,4
+models/tokenizer,project,视觉 VQ 提取与均匀分箱动作编码,3,3,2
+reference,dependency / extension,上级模块的组织目录,0,5217,3665
+reference/Emu3,dependency / extension,Emu3 上游资源和模型扩展,8,34,21
+reference/Emu3/assets,dependency / extension,Emu3 上游资源和模型扩展,3,3,0
+reference/Emu3/emu3,dependency / extension,Emu3 上游资源和模型扩展,0,14,14
+reference/Emu3/emu3/mllm,dependency / extension,Emu3 Transformer 与驾驶动作专家核心,6,6,6
+reference/Emu3/emu3/tokenizer,dependency / extension,视觉 VQ 模型与图像预处理,4,4,4
+reference/Emu3/emu3/train,dependency / extension,Emu3 上游训练与数据准备,4,4,4
+reference/Emu3/replicate_demo,dependency / extension,Emu3 上游资源和模型扩展,3,3,2
+reference/Emu3/scripts,dependency / extension,Emu3 上游资源和模型扩展,4,6,1
+reference/Emu3/scripts/misc,dependency / extension,Emu3 上游资源和模型扩展,1,2,1
+reference/Emu3/scripts/misc/test_video,dependency / extension,Emu3 上游资源和模型扩展,1,1,0
+reference/Qwen2.5-VL,dependency / extension,Qwen 上游资源与备用模型代码,5,57,28
+reference/Qwen2.5-VL/qwen-vl-finetune,dependency / extension,Qwen 上游资源与备用模型代码,1,25,9
+reference/Qwen2.5-VL/qwen-vl-finetune/demo,dependency / extension,Qwen 上游资源与备用模型代码,2,8,0
+reference/Qwen2.5-VL/qwen-vl-finetune/demo/images,dependency / extension,Qwen 上游资源与备用模型代码,3,3,0
+reference/Qwen2.5-VL/qwen-vl-finetune/demo/videos,dependency / extension,Qwen 上游资源与备用模型代码,3,3,0
+reference/Qwen2.5-VL/qwen-vl-finetune/qwenvl,dependency / extension,Qwen 上游资源与备用模型代码,0,7,7
+reference/Qwen2.5-VL/qwen-vl-finetune/qwenvl/dataset,dependency / extension,NAVSIM/NuPlan 两时刻数据、mask 和位置编码,3,3,3
+reference/Qwen2.5-VL/qwen-vl-finetune/qwenvl/train,dependency / extension,Qwen 参数 dataclass 与训练辅助,3,3,3
+reference/Qwen2.5-VL/qwen-vl-finetune/qwenvl/utils,dependency / extension,VLA token 和动作词表映射,1,1,1
+reference/Qwen2.5-VL/qwen-vl-finetune/scripts,dependency / extension,Qwen 上游资源与备用模型代码,6,6,0
+reference/Qwen2.5-VL/qwen-vl-finetune/tools,dependency / extension,Qwen 上游资源与备用模型代码,3,3,2
+reference/Qwen2.5-VL/qwen-vl-utils,dependency / extension,Qwen 图像视频输入预处理工具包,5,7,2
+reference/Qwen2.5-VL/qwen-vl-utils/src,dependency / extension,Qwen 图像视频输入预处理工具包,0,2,2
+reference/Qwen2.5-VL/qwen-vl-utils/src/qwen_vl_utils,dependency / extension,Qwen 图像视频输入预处理工具包,2,2,2
+reference/Qwen2.5-VL/qwen2_5_vl,dependency / extension,Qwen 上游资源与备用模型代码,6,9,8
+reference/Qwen2.5-VL/qwen2_5_vl/modeling_ross,dependency / extension,Qwen 上游资源与备用模型代码,3,3,2
+reference/Qwen2.5-VL/qwen2_vl,dependency / extension,Qwen 上游资源与备用模型代码,7,7,7
+reference/Qwen2.5-VL/web_demo_streaming,dependency / extension,Qwen 上游资源与备用模型代码,4,4,1
+reference/transformers,dependency / extension,Transformers 上游依赖源码及本地扩展,15,5126,3616
+reference/transformers/.circleci,dependency / extension,CircleCI 配置,4,4,2
+reference/transformers/.github,dependency / extension,GitHub CI 与协作配置,1,59,1
+reference/transformers/.github/conda,dependency / extension,GitHub CI 与协作配置,2,2,0
+reference/transformers/.github/ISSUE_TEMPLATE,dependency / extension,GitHub CI 与协作配置,6,6,0
+reference/transformers/.github/scripts,dependency / extension,GitHub CI 与协作配置,2,2,1
+reference/transformers/.github/workflows,dependency / extension,GitHub CI 与协作配置,48,48,0
+reference/transformers/benchmark,dependency / extension,上游基准测试,10,13,5
+reference/transformers/benchmark/benches,dependency / extension,上游基准测试,1,1,1
+reference/transformers/benchmark/config,dependency / extension,上游基准测试,1,1,0
+reference/transformers/benchmark/utils,dependency / extension,上游基准测试,1,1,0
+reference/transformers/docker,dependency / extension,容器环境定义,14,30,0
+reference/transformers/docker/transformers-all-latest-gpu,dependency / extension,容器环境定义,1,1,0
+reference/transformers/docker/transformers-doc-builder,dependency / extension,容器环境定义,1,1,0
+reference/transformers/docker/transformers-gpu,dependency / extension,容器环境定义,1,1,0
+reference/transformers/docker/transformers-past-gpu,dependency / extension,容器环境定义,1,1,0
+reference/transformers/docker/transformers-pytorch-amd-gpu,dependency / extension,容器环境定义,1,1,0
+reference/transformers/docker/transformers-pytorch-deepspeed-amd-gpu,dependency / extension,容器环境定义,1,1,0
+reference/transformers/docker/transformers-pytorch-deepspeed-latest-gpu,dependency / extension,容器环境定义,1,1,0
+reference/transformers/docker/transformers-pytorch-deepspeed-nightly-gpu,dependency / extension,容器环境定义,1,1,0
+reference/transformers/docker/transformers-pytorch-gpu,dependency / extension,容器环境定义,1,1,0
+reference/transformers/docker/transformers-pytorch-tpu,dependency / extension,容器环境定义,4,4,0
+reference/transformers/docker/transformers-pytorch-xpu,dependency / extension,容器环境定义,1,1,0
+reference/transformers/docker/transformers-quantization-latest-gpu,dependency / extension,容器环境定义,1,1,0
+reference/transformers/docker/transformers-tensorflow-gpu,dependency / extension,容器环境定义,1,1,0
+reference/transformers/docs,dependency / extension,上游 API 与教程文档,2,1180,9
+reference/transformers/docs/source,dependency / extension,上游 API 与教程文档,1,1178,9
+reference/transformers/docs/source/ar,dependency / extension,上游 API 与教程文档,45,53,1
+reference/transformers/docs/source/ar/tasks,dependency / extension,上游 API 与教程文档,8,8,0
+reference/transformers/docs/source/de,dependency / extension,上游 API 与教程文档,19,19,1
+reference/transformers/docs/source/en,dependency / extension,上游 API 与教程文档,83,573,1
+reference/transformers/docs/source/en/internal,dependency / extension,上游 API 与教程文档,11,11,0
+reference/transformers/docs/source/en/main_classes,dependency / extension,上游 API 与教程文档,22,22,0
+reference/transformers/docs/source/en/model_doc,dependency / extension,上游 API 与教程文档,402,402,0
+reference/transformers/docs/source/en/quantization,dependency / extension,上游 API 与教程文档,23,23,0
+reference/transformers/docs/source/en/reference,dependency / extension,上游 API 与教程文档,1,1,0
+reference/transformers/docs/source/en/tasks,dependency / extension,上游 API 与教程文档,31,31,0
+reference/transformers/docs/source/es,dependency / extension,上游 API 与教程文档,38,46,1
+reference/transformers/docs/source/es/tasks,dependency / extension,上游 API 与教程文档,8,8,0
+reference/transformers/docs/source/fr,dependency / extension,上游 API 与教程文档,11,11,1
+reference/transformers/docs/source/hi,dependency / extension,上游 API 与教程文档,4,4,0
+reference/transformers/docs/source/it,dependency / extension,上游 API 与教程文档,33,33,1
+reference/transformers/docs/source/ja,dependency / extension,上游 API 与教程文档,56,163,0
+reference/transformers/docs/source/ja/internal,dependency / extension,上游 API 与教程文档,9,9,0
+reference/transformers/docs/source/ja/main_classes,dependency / extension,上游 API 与教程文档,18,18,0
+reference/transformers/docs/source/ja/model_doc,dependency / extension,上游 API 与教程文档,56,56,0
+reference/transformers/docs/source/ja/tasks,dependency / extension,上游 API 与教程文档,24,24,0
+reference/transformers/docs/source/ko,dependency / extension,上游 API 与教程文档,62,180,1
+reference/transformers/docs/source/ko/internal,dependency / extension,上游 API 与教程文档,9,9,0
+reference/transformers/docs/source/ko/main_classes,dependency / extension,上游 API 与教程文档,17,17,0
+reference/transformers/docs/source/ko/model_doc,dependency / extension,上游 API 与教程文档,59,59,0
+reference/transformers/docs/source/ko/quantization,dependency / extension,上游 API 与教程文档,6,6,0
+reference/transformers/docs/source/ko/tasks,dependency / extension,上游 API 与教程文档,27,27,0
+reference/transformers/docs/source/ms,dependency / extension,上游 API 与教程文档,2,2,0
+reference/transformers/docs/source/pt,dependency / extension,上游 API 与教程文档,15,17,1
+reference/transformers/docs/source/pt/tasks,dependency / extension,上游 API 与教程文档,2,2,0
+reference/transformers/docs/source/te,dependency / extension,上游 API 与教程文档,3,3,0
+reference/transformers/docs/source/tr,dependency / extension,上游 API 与教程文档,2,2,0
+reference/transformers/docs/source/zh,dependency / extension,上游 API 与教程文档,42,71,0
+reference/transformers/docs/source/zh/internal,dependency / extension,上游 API 与教程文档,9,9,0
+reference/transformers/docs/source/zh/main_classes,dependency / extension,上游 API 与教程文档,18,18,0
+reference/transformers/docs/source/zh/model_doc,dependency / extension,上游 API 与教程文档,1,1,0
+reference/transformers/docs/source/zh/tasks,dependency / extension,上游 API 与教程文档,1,1,0
+reference/transformers/examples,dependency / extension,上游任务示例,3,288,169
+reference/transformers/examples/flax,dependency / extension,上游任务示例,4,34,17
+reference/transformers/examples/flax/image-captioning,dependency / extension,上游任务示例,3,3,2
+reference/transformers/examples/flax/language-modeling,dependency / extension,上游任务示例,8,8,6
+reference/transformers/examples/flax/question-answering,dependency / extension,上游任务示例,4,4,2
+reference/transformers/examples/flax/speech-recognition,dependency / extension,上游任务示例,3,3,1
+reference/transformers/examples/flax/summarization,dependency / extension,上游任务示例,3,3,1
+reference/transformers/examples/flax/text-classification,dependency / extension,上游任务示例,3,3,1
+reference/transformers/examples/flax/token-classification,dependency / extension,上游任务示例,3,3,1
+reference/transformers/examples/flax/vision,dependency / extension,上游任务示例,3,3,1
+reference/transformers/examples/legacy,dependency / extension,上游任务示例,7,73,43
+reference/transformers/examples/legacy/benchmarking,dependency / extension,上游任务示例,4,4,2
+reference/transformers/examples/legacy/multiple_choice,dependency / extension,上游任务示例,2,2,2
+reference/transformers/examples/legacy/pytorch-lightning,dependency / extension,上游任务示例,7,7,3
+reference/transformers/examples/legacy/question-answering,dependency / extension,上游任务示例,3,3,2
+reference/transformers/examples/legacy/seq2seq,dependency / extension,上游任务示例,32,42,24
+reference/transformers/examples/legacy/seq2seq/test_data,dependency / extension,上游任务示例,0,10,1
+reference/transformers/examples/legacy/seq2seq/test_data/fsmt,dependency / extension,上游任务示例,2,2,1
+reference/transformers/examples/legacy/seq2seq/test_data/wmt_en_ro,dependency / extension,上游任务示例,8,8,0
+reference/transformers/examples/legacy/token-classification,dependency / extension,上游任务示例,7,8,4
+reference/transformers/examples/legacy/token-classification/scripts,dependency / extension,上游任务示例,1,1,1
+reference/transformers/examples/metrics-monitoring,dependency / extension,上游任务示例,8,8,1
+reference/transformers/examples/modular-transformers,dependency / extension,上游任务示例,35,35,33
+reference/transformers/examples/pytorch,dependency / extension,上游任务示例,11,93,54
+reference/transformers/examples/pytorch/audio-classification,dependency / extension,上游任务示例,3,3,1
+reference/transformers/examples/pytorch/contrastive-image-text,dependency / extension,上游任务示例,3,3,1
+reference/transformers/examples/pytorch/image-classification,dependency / extension,上游任务示例,4,4,2
+reference/transformers/examples/pytorch/image-pretraining,dependency / extension,上游任务示例,5,5,3
+reference/transformers/examples/pytorch/instance-segmentation,dependency / extension,上游任务示例,4,4,2
+reference/transformers/examples/pytorch/language-modeling,dependency / extension,上游任务示例,9,9,7
+reference/transformers/examples/pytorch/multiple-choice,dependency / extension,上游任务示例,5,5,2
+reference/transformers/examples/pytorch/object-detection,dependency / extension,上游任务示例,4,4,2
+reference/transformers/examples/pytorch/question-answering,dependency / extension,上游任务示例,10,10,8
+reference/transformers/examples/pytorch/semantic-segmentation,dependency / extension,上游任务示例,4,4,2
+reference/transformers/examples/pytorch/speech-pretraining,dependency / extension,上游任务示例,3,3,1
+reference/transformers/examples/pytorch/speech-recognition,dependency / extension,上游任务示例,5,5,3
+reference/transformers/examples/pytorch/summarization,dependency / extension,上游任务示例,4,4,2
+reference/transformers/examples/pytorch/text-classification,dependency / extension,上游任务示例,6,6,4
+reference/transformers/examples/pytorch/text-generation,dependency / extension,上游任务示例,3,3,1
+reference/transformers/examples/pytorch/token-classification,dependency / extension,上游任务示例,6,6,2
+reference/transformers/examples/pytorch/translation,dependency / extension,上游任务示例,4,4,2
+reference/transformers/examples/quantization,dependency / extension,上游任务示例,2,2,2
+reference/transformers/examples/research_projects,dependency / extension,上游任务示例,1,1,0
+reference/transformers/examples/tensorflow,dependency / extension,上游任务示例,3,38,16
+reference/transformers/examples/tensorflow/contrastive-image-text,dependency / extension,上游任务示例,3,3,1
+reference/transformers/examples/tensorflow/image-classification,dependency / extension,上游任务示例,3,3,1
+reference/transformers/examples/tensorflow/language-modeling,dependency / extension,上游任务示例,4,4,2
+reference/transformers/examples/tensorflow/language-modeling-tpu,dependency / extension,上游任务示例,5,5,3
+reference/transformers/examples/tensorflow/multiple-choice,dependency / extension,上游任务示例,3,3,1
+reference/transformers/examples/tensorflow/question-answering,dependency / extension,上游任务示例,4,4,2
+reference/transformers/examples/tensorflow/summarization,dependency / extension,上游任务示例,3,3,1
+reference/transformers/examples/tensorflow/text-classification,dependency / extension,上游任务示例,4,4,2
+reference/transformers/examples/tensorflow/token-classification,dependency / extension,上游任务示例,3,3,1
+reference/transformers/examples/tensorflow/translation,dependency / extension,上游任务示例,3,3,1
+reference/transformers/examples/training,dependency / extension,上游任务示例,1,1,1
+reference/transformers/i18n,dependency / extension,多语言介绍,14,14,0
+reference/transformers/notebooks,dependency / extension,上游 Notebook,1,1,0
+reference/transformers/scripts,dependency / extension,上游维护脚本,2,3,3
+reference/transformers/scripts/distributed,dependency / extension,上游维护脚本,1,1,1
+reference/transformers/src,dependency / extension,Transformers 上游依赖源码及本地扩展,0,2177,2147
+reference/transformers/src/transformers,dependency / extension,Transformers 上游依赖源码及本地扩展,65,2177,2147
+reference/transformers/src/transformers/commands,dependency / extension,Transformers 上游依赖源码及本地扩展,11,11,11
+reference/transformers/src/transformers/data,dependency / extension,Transformers 上游依赖源码及本地扩展,2,2,2
+reference/transformers/src/transformers/distributed,dependency / extension,Transformers 上游依赖源码及本地扩展,2,2,2
+reference/transformers/src/transformers/generation,dependency / extension,Transformers 上游依赖源码及本地扩展,14,19,19
+reference/transformers/src/transformers/generation/continuous_batching,dependency / extension,Transformers 上游依赖源码及本地扩展,5,5,5
+reference/transformers/src/transformers/integrations,dependency / extension,Transformers 上游依赖源码及本地扩展,34,34,34
+reference/transformers/src/transformers/kernels,dependency / extension,Transformers 上游依赖源码及本地扩展,1,27,3
+reference/transformers/src/transformers/kernels/deta,dependency / extension,Transformers 上游依赖源码及本地扩展,2,8,0
+reference/transformers/src/transformers/kernels/deta/cpu,dependency / extension,Transformers 上游依赖源码及本地扩展,2,2,0
+reference/transformers/src/transformers/kernels/deta/cuda,dependency / extension,Transformers 上游依赖源码及本地扩展,4,4,0
+reference/transformers/src/transformers/kernels/falcon_mamba,dependency / extension,Transformers 上游依赖源码及本地扩展,2,2,2
+reference/transformers/src/transformers/kernels/mra,dependency / extension,Transformers 上游依赖源码及本地扩展,5,5,0
+reference/transformers/src/transformers/kernels/rwkv,dependency / extension,Transformers 上游依赖源码及本地扩展,3,3,0
+reference/transformers/src/transformers/kernels/yoso,dependency / extension,Transformers 上游依赖源码及本地扩展,8,8,0
+reference/transformers/src/transformers/loss,dependency / extension,Transformers 上游依赖源码及本地扩展,7,7,7
+reference/transformers/src/transformers/models,dependency / extension,Transformers 上游依赖源码及本地扩展,1,1906,1901
+reference/transformers/src/transformers/models/aimv2,dependency / extension,上游模型家族 aimv2；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/albert,dependency / extension,上游模型家族 albert；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/align,dependency / extension,上游模型家族 align；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/altclip,dependency / extension,上游模型家族 altclip；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/apertus,dependency / extension,上游模型家族 apertus；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/arcee,dependency / extension,上游模型家族 arcee；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/aria,dependency / extension,上游模型家族 aria；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/audio_spectrogram_transformer,dependency / extension,上游模型家族 audio_spectrogram_transformer；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/auto,dependency / extension,上游模型家族 auto；存在不代表主流程使用,11,11,11
+reference/transformers/src/transformers/models/autoformer,dependency / extension,上游模型家族 autoformer；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/aya_vision,dependency / extension,上游模型家族 aya_vision；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/bamba,dependency / extension,上游模型家族 bamba；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/bark,dependency / extension,上游模型家族 bark；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/bart,dependency / extension,上游模型家族 bart；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/barthez,dependency / extension,上游模型家族 barthez；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/bartpho,dependency / extension,上游模型家族 bartpho；存在不代表主流程使用,2,2,2
+reference/transformers/src/transformers/models/beit,dependency / extension,上游模型家族 beit；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/bert,dependency / extension,上游模型家族 bert；存在不代表主流程使用,8,8,8
+reference/transformers/src/transformers/models/bert_generation,dependency / extension,上游模型家族 bert_generation；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/bert_japanese,dependency / extension,上游模型家族 bert_japanese；存在不代表主流程使用,2,2,2
+reference/transformers/src/transformers/models/bertweet,dependency / extension,上游模型家族 bertweet；存在不代表主流程使用,2,2,2
+reference/transformers/src/transformers/models/big_bird,dependency / extension,上游模型家族 big_bird；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/bigbird_pegasus,dependency / extension,上游模型家族 bigbird_pegasus；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/biogpt,dependency / extension,上游模型家族 biogpt；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/bit,dependency / extension,上游模型家族 bit；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/bitnet,dependency / extension,上游模型家族 bitnet；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/blenderbot,dependency / extension,上游模型家族 blenderbot；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/blenderbot_small,dependency / extension,上游模型家族 blenderbot_small；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/blip,dependency / extension,上游模型家族 blip；存在不代表主流程使用,9,9,9
+reference/transformers/src/transformers/models/blip_2,dependency / extension,上游模型家族 blip_2；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/bloom,dependency / extension,上游模型家族 bloom；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/bridgetower,dependency / extension,上游模型家族 bridgetower；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/bros,dependency / extension,上游模型家族 bros；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/byt5,dependency / extension,上游模型家族 byt5；存在不代表主流程使用,2,2,2
+reference/transformers/src/transformers/models/camembert,dependency / extension,上游模型家族 camembert；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/canine,dependency / extension,上游模型家族 canine；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/chameleon,dependency / extension,上游模型家族 chameleon；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/chinese_clip,dependency / extension,上游模型家族 chinese_clip；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/clap,dependency / extension,上游模型家族 clap；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/clip,dependency / extension,上游模型家族 clip；存在不代表主流程使用,11,11,11
+reference/transformers/src/transformers/models/clipseg,dependency / extension,上游模型家族 clipseg；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/clvp,dependency / extension,上游模型家族 clvp；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/code_llama,dependency / extension,上游模型家族 code_llama；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/codegen,dependency / extension,上游模型家族 codegen；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/cohere,dependency / extension,上游模型家族 cohere；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/cohere2,dependency / extension,上游模型家族 cohere2；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/cohere2_vision,dependency / extension,上游模型家族 cohere2_vision；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/colpali,dependency / extension,上游模型家族 colpali；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/colqwen2,dependency / extension,上游模型家族 colqwen2；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/conditional_detr,dependency / extension,上游模型家族 conditional_detr；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/convbert,dependency / extension,上游模型家族 convbert；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/convnext,dependency / extension,上游模型家族 convnext；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/convnextv2,dependency / extension,上游模型家族 convnextv2；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/cpm,dependency / extension,上游模型家族 cpm；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/cpmant,dependency / extension,上游模型家族 cpmant；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/csm,dependency / extension,上游模型家族 csm；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/ctrl,dependency / extension,上游模型家族 ctrl；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/cvt,dependency / extension,上游模型家族 cvt；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/d_fine,dependency / extension,上游模型家族 d_fine；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/dab_detr,dependency / extension,上游模型家族 dab_detr；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/dac,dependency / extension,上游模型家族 dac；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/data2vec,dependency / extension,上游模型家族 data2vec；存在不代表主流程使用,9,9,9
+reference/transformers/src/transformers/models/dbrx,dependency / extension,上游模型家族 dbrx；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/deberta,dependency / extension,上游模型家族 deberta；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/deberta_v2,dependency / extension,上游模型家族 deberta_v2；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/decision_transformer,dependency / extension,上游模型家族 decision_transformer；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/deepseek_v2,dependency / extension,上游模型家族 deepseek_v2；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/deepseek_v3,dependency / extension,上游模型家族 deepseek_v3；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/deepseek_vl,dependency / extension,上游模型家族 deepseek_vl；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/deepseek_vl_hybrid,dependency / extension,上游模型家族 deepseek_vl_hybrid；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/deformable_detr,dependency / extension,上游模型家族 deformable_detr；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/deit,dependency / extension,上游模型家族 deit；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/deprecated,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,1,96,95
+reference/transformers/src/transformers/models/deprecated/bort,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,1,1,1
+reference/transformers/src/transformers/models/deprecated/deta,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/deprecated/efficientformer,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/deprecated/ernie_m,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/deprecated/gptsan_japanese,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/deprecated/graphormer,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,5,5,4
+reference/transformers/src/transformers/models/deprecated/jukebox,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/deprecated/mctct,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/deprecated/mega,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/deprecated/mmbt,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/deprecated/nat,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/deprecated/nezha,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/deprecated/open_llama,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/deprecated/qdqbert,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/deprecated/realm,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/deprecated/retribert,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/deprecated/speech_to_text_2,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/deprecated/tapex,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,2,2,2
+reference/transformers/src/transformers/models/deprecated/trajectory_transformer,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/deprecated/transfo_xl,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/deprecated/tvlt,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/deprecated/van,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/deprecated/vit_hybrid,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/deprecated/xlm_prophetnet,dependency / extension,上游模型家族 deprecated；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/depth_anything,dependency / extension,上游模型家族 depth_anything；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/depth_pro,dependency / extension,上游模型家族 depth_pro；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/detr,dependency / extension,上游模型家族 detr；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/dia,dependency / extension,上游模型家族 dia；存在不代表主流程使用,8,8,8
+reference/transformers/src/transformers/models/dialogpt,dependency / extension,上游模型家族 dialogpt；存在不代表主流程使用,1,1,1
+reference/transformers/src/transformers/models/diffllama,dependency / extension,上游模型家族 diffllama；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/dinat,dependency / extension,上游模型家族 dinat；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/dinov2,dependency / extension,上游模型家族 dinov2；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/dinov2_with_registers,dependency / extension,上游模型家族 dinov2_with_registers；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/dinov3_convnext,dependency / extension,上游模型家族 dinov3_convnext；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/dinov3_vit,dependency / extension,上游模型家族 dinov3_vit；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/distilbert,dependency / extension,上游模型家族 distilbert；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/dit,dependency / extension,上游模型家族 dit；存在不代表主流程使用,1,1,1
+reference/transformers/src/transformers/models/doge,dependency / extension,上游模型家族 doge；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/donut,dependency / extension,上游模型家族 donut；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/dots1,dependency / extension,上游模型家族 dots1；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/dpr,dependency / extension,上游模型家族 dpr；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/dpt,dependency / extension,上游模型家族 dpt；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/efficientloftr,dependency / extension,上游模型家族 efficientloftr；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/efficientnet,dependency / extension,上游模型家族 efficientnet；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/electra,dependency / extension,上游模型家族 electra；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/emu3,dependency / extension,上游模型家族 emu3；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/encodec,dependency / extension,上游模型家族 encodec；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/encoder_decoder,dependency / extension,上游模型家族 encoder_decoder；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/eomt,dependency / extension,上游模型家族 eomt；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/ernie,dependency / extension,上游模型家族 ernie；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/ernie4_5,dependency / extension,上游模型家族 ernie4_5；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/ernie4_5_moe,dependency / extension,上游模型家族 ernie4_5_moe；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/esm,dependency / extension,上游模型家族 esm；存在不代表主流程使用,6,15,15
+reference/transformers/src/transformers/models/esm/openfold_utils,dependency / extension,上游模型家族 esm；存在不代表主流程使用,9,9,9
+reference/transformers/src/transformers/models/evolla,dependency / extension,上游模型家族 evolla；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/exaone4,dependency / extension,上游模型家族 exaone4；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/falcon,dependency / extension,上游模型家族 falcon；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/falcon_h1,dependency / extension,上游模型家族 falcon_h1；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/falcon_mamba,dependency / extension,上游模型家族 falcon_mamba；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/fastspeech2_conformer,dependency / extension,上游模型家族 fastspeech2_conformer；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/flaubert,dependency / extension,上游模型家族 flaubert；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/flava,dependency / extension,上游模型家族 flava；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/florence2,dependency / extension,上游模型家族 florence2；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/fnet,dependency / extension,上游模型家族 fnet；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/focalnet,dependency / extension,上游模型家族 focalnet；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/fsmt,dependency / extension,上游模型家族 fsmt；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/funnel,dependency / extension,上游模型家族 funnel；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/fuyu,dependency / extension,上游模型家族 fuyu；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/gemma,dependency / extension,上游模型家族 gemma；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/gemma2,dependency / extension,上游模型家族 gemma2；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/gemma3,dependency / extension,上游模型家族 gemma3；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/gemma3n,dependency / extension,上游模型家族 gemma3n；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/git,dependency / extension,上游模型家族 git；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/glm,dependency / extension,上游模型家族 glm；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/glm4,dependency / extension,上游模型家族 glm4；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/glm4_moe,dependency / extension,上游模型家族 glm4_moe；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/glm4v,dependency / extension,上游模型家族 glm4v；存在不代表主流程使用,8,8,8
+reference/transformers/src/transformers/models/glm4v_moe,dependency / extension,上游模型家族 glm4v_moe；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/glpn,dependency / extension,上游模型家族 glpn；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/got_ocr2,dependency / extension,上游模型家族 got_ocr2；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/gpt2,dependency / extension,上游模型家族 gpt2；存在不代表主流程使用,9,9,8
+reference/transformers/src/transformers/models/gpt_bigcode,dependency / extension,上游模型家族 gpt_bigcode；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/gpt_neo,dependency / extension,上游模型家族 gpt_neo；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/gpt_neox,dependency / extension,上游模型家族 gpt_neox；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/gpt_neox_japanese,dependency / extension,上游模型家族 gpt_neox_japanese；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/gpt_oss,dependency / extension,上游模型家族 gpt_oss；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/gpt_sw3,dependency / extension,上游模型家族 gpt_sw3；存在不代表主流程使用,2,2,2
+reference/transformers/src/transformers/models/gptj,dependency / extension,上游模型家族 gptj；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/granite,dependency / extension,上游模型家族 granite；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/granite_speech,dependency / extension,上游模型家族 granite_speech；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/granitemoe,dependency / extension,上游模型家族 granitemoe；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/granitemoehybrid,dependency / extension,上游模型家族 granitemoehybrid；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/granitemoeshared,dependency / extension,上游模型家族 granitemoeshared；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/grounding_dino,dependency / extension,上游模型家族 grounding_dino；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/groupvit,dependency / extension,上游模型家族 groupvit；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/helium,dependency / extension,上游模型家族 helium；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/herbert,dependency / extension,上游模型家族 herbert；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/hgnet_v2,dependency / extension,上游模型家族 hgnet_v2；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/hiera,dependency / extension,上游模型家族 hiera；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/hubert,dependency / extension,上游模型家族 hubert；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/hunyuan_v1_dense,dependency / extension,上游模型家族 hunyuan_v1_dense；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/hunyuan_v1_moe,dependency / extension,上游模型家族 hunyuan_v1_moe；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/ibert,dependency / extension,上游模型家族 ibert；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/idefics,dependency / extension,上游模型家族 idefics；存在不代表主流程使用,10,10,10
+reference/transformers/src/transformers/models/idefics2,dependency / extension,上游模型家族 idefics2；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/idefics3,dependency / extension,上游模型家族 idefics3；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/ijepa,dependency / extension,上游模型家族 ijepa；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/imagegpt,dependency / extension,上游模型家族 imagegpt；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/informer,dependency / extension,上游模型家族 informer；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/instructblip,dependency / extension,上游模型家族 instructblip；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/instructblipvideo,dependency / extension,上游模型家族 instructblipvideo；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/internvl,dependency / extension,上游模型家族 internvl；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/jamba,dependency / extension,上游模型家族 jamba；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/janus,dependency / extension,上游模型家族 janus；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/jetmoe,dependency / extension,上游模型家族 jetmoe；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/kosmos2,dependency / extension,上游模型家族 kosmos2；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/kosmos2_5,dependency / extension,上游模型家族 kosmos2_5；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/kyutai_speech_to_text,dependency / extension,上游模型家族 kyutai_speech_to_text；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/layoutlm,dependency / extension,上游模型家族 layoutlm；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/layoutlmv2,dependency / extension,上游模型家族 layoutlmv2；存在不代表主流程使用,9,9,9
+reference/transformers/src/transformers/models/layoutlmv3,dependency / extension,上游模型家族 layoutlmv3；存在不代表主流程使用,10,10,10
+reference/transformers/src/transformers/models/layoutxlm,dependency / extension,上游模型家族 layoutxlm；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/led,dependency / extension,上游模型家族 led；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/levit,dependency / extension,上游模型家族 levit；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/lfm2,dependency / extension,上游模型家族 lfm2；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/lightglue,dependency / extension,上游模型家族 lightglue；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/lilt,dependency / extension,上游模型家族 lilt；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/llama,dependency / extension,上游模型家族 llama；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/llama4,dependency / extension,上游模型家族 llama4；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/llava,dependency / extension,上游模型家族 llava；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/llava_next,dependency / extension,上游模型家族 llava_next；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/llava_next_video,dependency / extension,上游模型家族 llava_next_video；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/llava_onevision,dependency / extension,上游模型家族 llava_onevision；存在不代表主流程使用,8,8,8
+reference/transformers/src/transformers/models/longformer,dependency / extension,上游模型家族 longformer；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/longt5,dependency / extension,上游模型家族 longt5；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/luke,dependency / extension,上游模型家族 luke；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/lxmert,dependency / extension,上游模型家族 lxmert；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/m2m_100,dependency / extension,上游模型家族 m2m_100；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/mamba,dependency / extension,上游模型家族 mamba；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/mamba2,dependency / extension,上游模型家族 mamba2；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/marian,dependency / extension,上游模型家族 marian；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/markuplm,dependency / extension,上游模型家族 markuplm；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/mask2former,dependency / extension,上游模型家族 mask2former；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/maskformer,dependency / extension,上游模型家族 maskformer；存在不代表主流程使用,8,8,8
+reference/transformers/src/transformers/models/mbart,dependency / extension,上游模型家族 mbart；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/mbart50,dependency / extension,上游模型家族 mbart50；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/megatron_bert,dependency / extension,上游模型家族 megatron_bert；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/megatron_gpt2,dependency / extension,上游模型家族 megatron_gpt2；存在不代表主流程使用,2,2,2
+reference/transformers/src/transformers/models/metaclip_2,dependency / extension,上游模型家族 metaclip_2；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/mgp_str,dependency / extension,上游模型家族 mgp_str；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/mimi,dependency / extension,上游模型家族 mimi；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/minimax,dependency / extension,上游模型家族 minimax；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/mistral,dependency / extension,上游模型家族 mistral；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/mistral3,dependency / extension,上游模型家族 mistral3；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/mixtral,dependency / extension,上游模型家族 mixtral；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/mlcd,dependency / extension,上游模型家族 mlcd；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/mllama,dependency / extension,上游模型家族 mllama；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/mluke,dependency / extension,上游模型家族 mluke；存在不代表主流程使用,2,2,2
+reference/transformers/src/transformers/models/mm_grounding_dino,dependency / extension,上游模型家族 mm_grounding_dino；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/mobilebert,dependency / extension,上游模型家族 mobilebert；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/mobilenet_v1,dependency / extension,上游模型家族 mobilenet_v1；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/mobilenet_v2,dependency / extension,上游模型家族 mobilenet_v2；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/mobilevit,dependency / extension,上游模型家族 mobilevit；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/mobilevitv2,dependency / extension,上游模型家族 mobilevitv2；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/modernbert,dependency / extension,上游模型家族 modernbert；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/modernbert_decoder,dependency / extension,上游模型家族 modernbert_decoder；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/moonshine,dependency / extension,上游模型家族 moonshine；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/moshi,dependency / extension,上游模型家族 moshi；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/mpnet,dependency / extension,上游模型家族 mpnet；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/mpt,dependency / extension,上游模型家族 mpt；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/mra,dependency / extension,上游模型家族 mra；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/mt5,dependency / extension,上游模型家族 mt5；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/musicgen,dependency / extension,上游模型家族 musicgen；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/musicgen_melody,dependency / extension,上游模型家族 musicgen_melody；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/mvp,dependency / extension,上游模型家族 mvp；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/myt5,dependency / extension,上游模型家族 myt5；存在不代表主流程使用,2,2,2
+reference/transformers/src/transformers/models/nemotron,dependency / extension,上游模型家族 nemotron；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/nllb,dependency / extension,上游模型家族 nllb；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/nllb_moe,dependency / extension,上游模型家族 nllb_moe；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/nougat,dependency / extension,上游模型家族 nougat；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/nystromformer,dependency / extension,上游模型家族 nystromformer；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/olmo,dependency / extension,上游模型家族 olmo；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/olmo2,dependency / extension,上游模型家族 olmo2；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/olmoe,dependency / extension,上游模型家族 olmoe；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/omdet_turbo,dependency / extension,上游模型家族 omdet_turbo；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/oneformer,dependency / extension,上游模型家族 oneformer；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/openai,dependency / extension,上游模型家族 openai；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/opt,dependency / extension,上游模型家族 opt；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/ovis2,dependency / extension,上游模型家族 ovis2；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/owlv2,dependency / extension,上游模型家族 owlv2；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/owlvit,dependency / extension,上游模型家族 owlvit；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/paligemma,dependency / extension,上游模型家族 paligemma；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/patchtsmixer,dependency / extension,上游模型家族 patchtsmixer；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/patchtst,dependency / extension,上游模型家族 patchtst；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/pegasus,dependency / extension,上游模型家族 pegasus；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/pegasus_x,dependency / extension,上游模型家族 pegasus_x；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/perceiver,dependency / extension,上游模型家族 perceiver；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/perception_lm,dependency / extension,上游模型家族 perception_lm；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/persimmon,dependency / extension,上游模型家族 persimmon；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/phi,dependency / extension,上游模型家族 phi；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/phi3,dependency / extension,上游模型家族 phi3；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/phi4_multimodal,dependency / extension,上游模型家族 phi4_multimodal；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/phimoe,dependency / extension,上游模型家族 phimoe；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/phobert,dependency / extension,上游模型家族 phobert；存在不代表主流程使用,2,2,2
+reference/transformers/src/transformers/models/pix2struct,dependency / extension,上游模型家族 pix2struct；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/pixtral,dependency / extension,上游模型家族 pixtral；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/plbart,dependency / extension,上游模型家族 plbart；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/poolformer,dependency / extension,上游模型家族 poolformer；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/pop2piano,dependency / extension,上游模型家族 pop2piano；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/prompt_depth_anything,dependency / extension,上游模型家族 prompt_depth_anything；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/prophetnet,dependency / extension,上游模型家族 prophetnet；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/pvt,dependency / extension,上游模型家族 pvt；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/pvt_v2,dependency / extension,上游模型家族 pvt_v2；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/qwen2,dependency / extension,上游模型家族 qwen2；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/qwen2_5_omni,dependency / extension,上游模型家族 qwen2_5_omni；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/qwen2_5_vl,dependency / extension,Qwen2.5-VL、ROSS 与 NPU 算子适配,7,11,9
+reference/transformers/src/transformers/models/qwen2_5_vl/modeling_ross,dependency / extension,ROSS 去噪器、修改的 SD UNet 和负提示 embedding,4,4,2
+reference/transformers/src/transformers/models/qwen2_audio,dependency / extension,上游模型家族 qwen2_audio；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/qwen2_moe,dependency / extension,上游模型家族 qwen2_moe；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/qwen2_vl,dependency / extension,上游模型家族 qwen2_vl；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/qwen3,dependency / extension,上游模型家族 qwen3；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/qwen3_moe,dependency / extension,上游模型家族 qwen3_moe；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/qwen3_vl,dependency / extension,Qwen3-VL 骨干、processor 和 ROSS wrapper,7,7,7
+reference/transformers/src/transformers/models/rag,dependency / extension,上游模型家族 rag；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/recurrent_gemma,dependency / extension,上游模型家族 recurrent_gemma；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/reformer,dependency / extension,上游模型家族 reformer；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/regnet,dependency / extension,上游模型家族 regnet；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/rembert,dependency / extension,上游模型家族 rembert；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/resnet,dependency / extension,上游模型家族 resnet；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/roberta,dependency / extension,上游模型家族 roberta；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/roberta_prelayernorm,dependency / extension,上游模型家族 roberta_prelayernorm；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/roc_bert,dependency / extension,上游模型家族 roc_bert；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/roformer,dependency / extension,上游模型家族 roformer；存在不代表主流程使用,8,8,8
+reference/transformers/src/transformers/models/rt_detr,dependency / extension,上游模型家族 rt_detr；存在不代表主流程使用,8,8,8
+reference/transformers/src/transformers/models/rt_detr_v2,dependency / extension,上游模型家族 rt_detr_v2；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/rwkv,dependency / extension,上游模型家族 rwkv；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/sam,dependency / extension,上游模型家族 sam；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/sam2,dependency / extension,上游模型家族 sam2；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/sam2_video,dependency / extension,上游模型家族 sam2_video；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/sam_hq,dependency / extension,上游模型家族 sam_hq；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/seamless_m4t,dependency / extension,上游模型家族 seamless_m4t；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/seamless_m4t_v2,dependency / extension,上游模型家族 seamless_m4t_v2；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/seed_oss,dependency / extension,上游模型家族 seed_oss；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/segformer,dependency / extension,上游模型家族 segformer；存在不代表主流程使用,8,8,8
+reference/transformers/src/transformers/models/seggpt,dependency / extension,上游模型家族 seggpt；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/sew,dependency / extension,上游模型家族 sew；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/sew_d,dependency / extension,上游模型家族 sew_d；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/shieldgemma2,dependency / extension,上游模型家族 shieldgemma2；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/siglip,dependency / extension,上游模型家族 siglip；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/siglip2,dependency / extension,上游模型家族 siglip2；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/smollm3,dependency / extension,上游模型家族 smollm3；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/smolvlm,dependency / extension,上游模型家族 smolvlm；存在不代表主流程使用,8,8,8
+reference/transformers/src/transformers/models/speech_encoder_decoder,dependency / extension,上游模型家族 speech_encoder_decoder；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/speech_to_text,dependency / extension,上游模型家族 speech_to_text；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/speecht5,dependency / extension,上游模型家族 speecht5；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/splinter,dependency / extension,上游模型家族 splinter；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/squeezebert,dependency / extension,上游模型家族 squeezebert；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/stablelm,dependency / extension,上游模型家族 stablelm；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/starcoder2,dependency / extension,上游模型家族 starcoder2；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/superglue,dependency / extension,上游模型家族 superglue；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/superpoint,dependency / extension,上游模型家族 superpoint；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/swiftformer,dependency / extension,上游模型家族 swiftformer；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/swin,dependency / extension,上游模型家族 swin；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/swin2sr,dependency / extension,上游模型家族 swin2sr；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/swinv2,dependency / extension,上游模型家族 swinv2；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/switch_transformers,dependency / extension,上游模型家族 switch_transformers；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/t5,dependency / extension,上游模型家族 t5；存在不代表主流程使用,8,8,7
+reference/transformers/src/transformers/models/t5gemma,dependency / extension,上游模型家族 t5gemma；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/table_transformer,dependency / extension,上游模型家族 table_transformer；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/tapas,dependency / extension,上游模型家族 tapas；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/textnet,dependency / extension,上游模型家族 textnet；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/time_series_transformer,dependency / extension,上游模型家族 time_series_transformer；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/timesfm,dependency / extension,上游模型家族 timesfm；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/timesformer,dependency / extension,上游模型家族 timesformer；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/timm_backbone,dependency / extension,上游模型家族 timm_backbone；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/timm_wrapper,dependency / extension,上游模型家族 timm_wrapper；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/trocr,dependency / extension,上游模型家族 trocr；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/tvp,dependency / extension,上游模型家族 tvp；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/udop,dependency / extension,上游模型家族 udop；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/umt5,dependency / extension,上游模型家族 umt5；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/unispeech,dependency / extension,上游模型家族 unispeech；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/unispeech_sat,dependency / extension,上游模型家族 unispeech_sat；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/univnet,dependency / extension,上游模型家族 univnet；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/upernet,dependency / extension,上游模型家族 upernet；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/video_llava,dependency / extension,上游模型家族 video_llava；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/videomae,dependency / extension,上游模型家族 videomae；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/vilt,dependency / extension,上游模型家族 vilt；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/vipllava,dependency / extension,上游模型家族 vipllava；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/vision_encoder_decoder,dependency / extension,上游模型家族 vision_encoder_decoder；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/vision_text_dual_encoder,dependency / extension,上游模型家族 vision_text_dual_encoder；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/visual_bert,dependency / extension,上游模型家族 visual_bert；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/vit,dependency / extension,上游模型家族 vit；存在不代表主流程使用,8,8,8
+reference/transformers/src/transformers/models/vit_mae,dependency / extension,上游模型家族 vit_mae；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/vit_msn,dependency / extension,上游模型家族 vit_msn；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/vitdet,dependency / extension,上游模型家族 vitdet；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/vitmatte,dependency / extension,上游模型家族 vitmatte；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/vitpose,dependency / extension,上游模型家族 vitpose；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/vitpose_backbone,dependency / extension,上游模型家族 vitpose_backbone；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/vits,dependency / extension,上游模型家族 vits；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/vivit,dependency / extension,上游模型家族 vivit；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/vjepa2,dependency / extension,上游模型家族 vjepa2；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/voxtral,dependency / extension,上游模型家族 voxtral；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/wav2vec2,dependency / extension,上游模型家族 wav2vec2；存在不代表主流程使用,8,8,8
+reference/transformers/src/transformers/models/wav2vec2_bert,dependency / extension,上游模型家族 wav2vec2_bert；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/wav2vec2_conformer,dependency / extension,上游模型家族 wav2vec2_conformer；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/wav2vec2_phoneme,dependency / extension,上游模型家族 wav2vec2_phoneme；存在不代表主流程使用,2,2,2
+reference/transformers/src/transformers/models/wav2vec2_with_lm,dependency / extension,上游模型家族 wav2vec2_with_lm；存在不代表主流程使用,2,2,2
+reference/transformers/src/transformers/models/wavlm,dependency / extension,上游模型家族 wavlm；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/whisper,dependency / extension,上游模型家族 whisper；存在不代表主流程使用,11,11,11
+reference/transformers/src/transformers/models/x_clip,dependency / extension,上游模型家族 x_clip；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/xcodec,dependency / extension,上游模型家族 xcodec；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/xglm,dependency / extension,上游模型家族 xglm；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/xlm,dependency / extension,上游模型家族 xlm；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/models/xlm_roberta,dependency / extension,上游模型家族 xlm_roberta；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/xlm_roberta_xl,dependency / extension,上游模型家族 xlm_roberta_xl；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/xlnet,dependency / extension,上游模型家族 xlnet；存在不代表主流程使用,6,6,6
+reference/transformers/src/transformers/models/xlstm,dependency / extension,上游模型家族 xlstm；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/xmod,dependency / extension,上游模型家族 xmod；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/yolos,dependency / extension,上游模型家族 yolos；存在不代表主流程使用,7,7,7
+reference/transformers/src/transformers/models/yoso,dependency / extension,上游模型家族 yoso；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/zamba,dependency / extension,上游模型家族 zamba；存在不代表主流程使用,3,3,3
+reference/transformers/src/transformers/models/zamba2,dependency / extension,上游模型家族 zamba2；存在不代表主流程使用,4,4,4
+reference/transformers/src/transformers/models/zoedepth,dependency / extension,上游模型家族 zoedepth；存在不代表主流程使用,5,5,5
+reference/transformers/src/transformers/onnx,dependency / extension,Transformers 上游依赖源码及本地扩展,6,6,6
+reference/transformers/src/transformers/pipelines,dependency / extension,Transformers 上游依赖源码及本地扩展,32,32,32
+reference/transformers/src/transformers/quantizers,dependency / extension,Transformers 上游依赖源码及本地扩展,24,24,24
+reference/transformers/src/transformers/sagemaker,dependency / extension,Transformers 上游依赖源码及本地扩展,3,3,3
+reference/transformers/src/transformers/utils,dependency / extension,Transformers 上游依赖源码及本地扩展,39,39,39
+reference/transformers/templates,dependency / extension,上游代码模板,0,10,2
+reference/transformers/templates/adding_a_missing_tokenization_test,dependency / extension,上游代码模板,2,3,1
+reference/transformers/templates/adding_a_missing_tokenization_test/cookiecutter-template-{{cookiecutter.modelname}},dependency / extension,上游代码模板,1,1,1
+reference/transformers/templates/adding_a_new_example_script,dependency / extension,上游代码模板,2,3,1
+reference/transformers/templates/adding_a_new_example_script/{{cookiecutter.directory_name}},dependency / extension,上游代码模板,1,1,1
+reference/transformers/templates/adding_a_new_model,dependency / extension,上游代码模板,2,4,0
+reference/transformers/templates/adding_a_new_model/open_model_proposals,dependency / extension,上游代码模板,2,2,0
+reference/transformers/tests,dependency / extension,上游测试,16,1262,1210
+reference/transformers/tests/bettertransformer,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/commands,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/deepspeed,dependency / extension,上游测试,5,5,2
+reference/transformers/tests/extended,dependency / extension,上游测试,1,1,1
+reference/transformers/tests/fixtures,dependency / extension,上游测试,18,44,0
+reference/transformers/tests/fixtures/gpt_oss,dependency / extension,上游测试,1,1,0
+reference/transformers/tests/fixtures/tests_samples,dependency / extension,上游测试,1,24,0
+reference/transformers/tests/fixtures/tests_samples/COCO,dependency / extension,上游测试,4,5,0
+reference/transformers/tests/fixtures/tests_samples/COCO/coco_panoptic,dependency / extension,上游测试,1,1,0
+reference/transformers/tests/fixtures/tests_samples/conll,dependency / extension,上游测试,1,1,0
+reference/transformers/tests/fixtures/tests_samples/GermEval,dependency / extension,上游测试,3,3,0
+reference/transformers/tests/fixtures/tests_samples/MRPC,dependency / extension,上游测试,4,4,0
+reference/transformers/tests/fixtures/tests_samples/SQUAD,dependency / extension,上游测试,1,1,0
+reference/transformers/tests/fixtures/tests_samples/STS-B,dependency / extension,上游测试,2,2,0
+reference/transformers/tests/fixtures/tests_samples/swag,dependency / extension,上游测试,1,1,0
+reference/transformers/tests/fixtures/tests_samples/wiki_text,dependency / extension,上游测试,1,1,0
+reference/transformers/tests/fixtures/tests_samples/wmt16,dependency / extension,上游测试,1,1,0
+reference/transformers/tests/fixtures/tests_samples/wmt_en_ro,dependency / extension,上游测试,3,3,0
+reference/transformers/tests/fixtures/tests_samples/xsum,dependency / extension,上游测试,1,1,0
+reference/transformers/tests/fixtures/xcodec,dependency / extension,上游测试,1,1,0
+reference/transformers/tests/fsdp,dependency / extension,上游测试,1,1,1
+reference/transformers/tests/generation,dependency / extension,上游测试,12,12,12
+reference/transformers/tests/models,dependency / extension,上游测试,1,1028,1028
+reference/transformers/tests/models/aimv2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/albert,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/align,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/altclip,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/apertus,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/arcee,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/aria,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/audio_spectrogram_transformer,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/auto,dependency / extension,上游测试,8,8,8
+reference/transformers/tests/models/autoformer,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/aya_vision,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/bamba,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/bark,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/bart,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/barthez,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/bartpho,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/beit,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/bert,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/bert_generation,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/bert_japanese,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/bertweet,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/big_bird,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/bigbird_pegasus,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/biogpt,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/bit,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/bitnet,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/blenderbot,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/blenderbot_small,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/blip,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/blip_2,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/bloom,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/bridgetower,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/bros,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/byt5,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/camembert,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/canine,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/chameleon,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/chinese_clip,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/clap,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/clip,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/clipseg,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/clvp,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/code_llama,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/codegen,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/cohere,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/cohere2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/cohere2_vision,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/colpali,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/colqwen2,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/conditional_detr,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/convbert,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/convnext,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/convnextv2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/cpm,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/cpmant,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/csm,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/ctrl,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/cvt,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/d_fine,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/dab_detr,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/dac,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/data2vec,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/dbrx,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/deberta,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/deberta_v2,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/decision_transformer,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/deepseek_v2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/deepseek_v3,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/deepseek_vl,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/deepseek_vl_hybrid,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/deformable_detr,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/deit,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/depth_anything,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/depth_pro,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/detr,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/dia,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/diffllama,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/dinat,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/dinov2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/dinov2_with_registers,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/dinov3_convnext,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/dinov3_vit,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/distilbert,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/dit,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/doge,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/donut,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/dots1,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/dpr,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/dpt,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/efficientloftr,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/efficientnet,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/electra,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/emu3,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/encodec,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/encoder_decoder,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/eomt,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/ernie,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/ernie4_5,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/ernie4_5_moe,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/esm,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/evolla,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/exaone4,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/falcon,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/falcon_h1,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/falcon_mamba,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/fastspeech2_conformer,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/flaubert,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/flava,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/florence2,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/fnet,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/focalnet,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/fsmt,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/funnel,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/fuyu,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/gemma,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/gemma2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/gemma3,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/gemma3n,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/git,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/glm,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/glm4,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/glm4_moe,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/glm4v,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/glm4v_moe,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/glpn,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/got_ocr2,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/gpt2,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/gpt_bigcode,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/gpt_neo,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/gpt_neox,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/gpt_neox_japanese,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/gpt_oss,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/gpt_sw3,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/gptj,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/granite,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/granite_speech,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/granitemoe,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/granitemoehybrid,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/granitemoeshared,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/grounding_dino,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/groupvit,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/helium,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/herbert,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/hgnet_v2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/hiera,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/hubert,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/hunyuan_v1_dense,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/hunyuan_v1_moe,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/ibert,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/idefics,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/idefics2,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/idefics3,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/ijepa,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/imagegpt,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/informer,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/instructblip,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/instructblipvideo,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/internvl,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/jamba,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/janus,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/jetmoe,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/kosmos2,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/kosmos2_5,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/kyutai_speech_to_text,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/layoutlm,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/layoutlmv2,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/layoutlmv3,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/layoutxlm,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/led,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/levit,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/lfm2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/lightglue,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/lilt,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/llama,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/llama4,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/llava,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/llava_next,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/llava_next_video,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/llava_onevision,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/longformer,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/longt5,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/luke,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/lxmert,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/m2m_100,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/mamba,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/mamba2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/marian,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/markuplm,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/mask2former,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/maskformer,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/mbart,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/mbart50,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/megatron_bert,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/megatron_gpt2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/metaclip_2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/mgp_str,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/mimi,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/minimax,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/mistral,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/mistral3,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/mixtral,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/mlcd,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/mllama,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/mluke,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/mm_grounding_dino,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/mobilebert,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/mobilenet_v1,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/mobilenet_v2,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/mobilevit,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/mobilevitv2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/modernbert,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/modernbert_decoder,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/moonshine,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/moshi,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/mpnet,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/mpt,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/mra,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/mt5,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/musicgen,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/musicgen_melody,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/mvp,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/myt5,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/nemotron,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/nllb,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/nllb_moe,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/nougat,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/nystromformer,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/olmo,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/olmo2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/olmoe,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/omdet_turbo,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/oneformer,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/openai,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/opt,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/ovis2,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/owlv2,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/owlvit,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/paligemma,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/paligemma2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/patchtsmixer,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/patchtst,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/pegasus,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/pegasus_x,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/perceiver,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/perception_lm,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/persimmon,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/phi,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/phi3,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/phi4_multimodal,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/phimoe,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/phobert,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/pix2struct,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/pixtral,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/plbart,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/poolformer,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/pop2piano,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/prompt_depth_anything,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/prophetnet,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/pvt,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/pvt_v2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/qwen2,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/qwen2_5_omni,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/qwen2_5_vl,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/qwen2_audio,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/qwen2_moe,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/qwen2_vl,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/qwen3,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/qwen3_moe,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/rag,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/recurrent_gemma,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/reformer,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/regnet,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/rembert,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/resnet,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/roberta,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/roberta_prelayernorm,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/roc_bert,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/roformer,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/rt_detr,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/rt_detr_v2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/rwkv,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/sam,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/sam2,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/sam2_video,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/sam_hq,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/seamless_m4t,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/seamless_m4t_v2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/seed_oss,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/segformer,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/seggpt,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/sew,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/sew_d,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/shieldgemma2,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/siglip,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/siglip2,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/smollm3,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/smolvlm,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/speech_encoder_decoder,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/speech_to_text,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/speecht5,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/splinter,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/squeezebert,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/stablelm,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/starcoder2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/superglue,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/superpoint,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/swiftformer,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/swin,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/swin2sr,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/swinv2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/switch_transformers,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/t5,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/t5gemma,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/table_transformer,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/tapas,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/textnet,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/time_series_transformer,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/timesfm,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/timesformer,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/timm_backbone,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/timm_wrapper,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/trocr,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/tvp,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/udop,dependency / extension,上游测试,4,4,4
+reference/transformers/tests/models/umt5,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/unispeech,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/unispeech_sat,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/univnet,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/upernet,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/video_llava,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/videomae,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/vilt,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/vipllava,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/vision_encoder_decoder,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/vision_text_dual_encoder,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/visual_bert,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/vit,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/vit_mae,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/vit_msn,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/vitdet,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/vitmatte,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/vitpose,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/vitpose_backbone,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/vits,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/vivit,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/vjepa2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/voxtral,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/wav2vec2,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/wav2vec2_bert,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/wav2vec2_conformer,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/wav2vec2_phoneme,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/wav2vec2_with_lm,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/wavlm,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/whisper,dependency / extension,上游测试,5,5,5
+reference/transformers/tests/models/x_clip,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/xcodec,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/xglm,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/xlm,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/xlm_roberta,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/xlm_roberta_xl,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/xlnet,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/xlstm,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/xmod,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/yolos,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/models/yoso,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/zamba,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/zamba2,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/models/zoedepth,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/optimization,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/peft_integration,dependency / extension,上游测试,1,1,1
+reference/transformers/tests/pipelines,dependency / extension,上游测试,32,32,32
+reference/transformers/tests/quantization,dependency / extension,上游测试,0,42,41
+reference/transformers/tests/quantization/aqlm_integration,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/quantization/autoawq,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/quantization/autoround,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/quantization/bitnet_integration,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/quantization/bnb,dependency / extension,上游测试,4,4,3
+reference/transformers/tests/quantization/compressed_tensors_integration,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/quantization/eetq_integration,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/quantization/fbgemm_fp8,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/quantization/finegrained_fp8,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/quantization/fp_quant_integration,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/quantization/ggml,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/quantization/gptq,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/quantization/higgs,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/quantization/hqq,dependency / extension,上游测试,1,1,1
+reference/transformers/tests/quantization/mxfp4,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/quantization/quanto_integration,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/quantization/quark_integration,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/quantization/spqr_integration,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/quantization/torchao_integration,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/quantization/vptq_integration,dependency / extension,上游测试,2,2,2
+reference/transformers/tests/repo_utils,dependency / extension,上游测试,4,5,5
+reference/transformers/tests/repo_utils/modular,dependency / extension,上游测试,1,1,1
+reference/transformers/tests/sagemaker,dependency / extension,上游测试,6,11,8
+reference/transformers/tests/sagemaker/scripts,dependency / extension,上游测试,0,5,3
+reference/transformers/tests/sagemaker/scripts/pytorch,dependency / extension,上游测试,3,3,2
+reference/transformers/tests/sagemaker/scripts/tensorflow,dependency / extension,上游测试,2,2,1
+reference/transformers/tests/tensor_parallel,dependency / extension,上游测试,1,1,1
+reference/transformers/tests/tokenization,dependency / extension,上游测试,3,3,3
+reference/transformers/tests/trainer,dependency / extension,上游测试,11,11,11
+reference/transformers/tests/utils,dependency / extension,上游测试,38,43,42
+reference/transformers/tests/utils/import_structures,dependency / extension,上游测试,5,5,5
+reference/transformers/utils,dependency / extension,上游检查工具,59,70,66
+reference/transformers/utils/test_module,dependency / extension,上游检查工具,10,10,10
+reference/transformers/utils/tf_ops,dependency / extension,上游检查工具,1,1,0
+scripts,project,上级模块的组织目录,2,19,1
+scripts/misc,project,模型下载和集群网络检查,3,3,0
+scripts/pretrain,project,NuPlan 六组视觉动作对多机预训练,2,2,0
+scripts/scripts_infer,project,基础动作推理启动与 ADE/FDE 计算,2,2,1
+scripts/scripts_train,project,NAVSIM 和 Qwen 各分支训练启动,5,5,0
+scripts/sft,project,DeepSpeed ZeRO 和 CPU offload 配置,4,4,0
+scripts/tokenizer,project,多卡视觉 VQ 码提取,1,1,0
+tools,project,上级模块的组织目录,1,23,22
+tools/action_tokenizer,project,FAST 编解码示例与检查,1,1,1
+tools/ascend_parity,project,Ascend 融合算子数值对照,1,1,1
+tools/pickle_gen,project,NAVSIM 样本生成、坐标变换与过滤,6,19,18
+tools/pickle_gen/nuplan_pickle_gen,project,NuPlan 分段、动作、命令、归一化合并和质量检查,13,13,13
+tools/synth,project,Qwen 测试用合成图像动作样本,1,1,1
+utils,project,驾驶数据集、训练入口与 FLOPs 统计,10,10,10

@@ -1,0 +1,11 @@
+flowchart LR
+    J[scene token JSON] --> AG[EmuVLAAgent]
+    AG --> COORD[相邻增量累积<br/>或直接采用 Anchor 位姿]
+    COORD --> T[Trajectory：当前自车坐标]
+    T --> G[变换到地图坐标并插值]
+    MC[Metric Cache<br/>地图、观测、参考轨迹] --> SIM[PDMSimulator<br/>LQR + 运动学自行车模型]
+    G --> SIM
+    SIM --> SCORE[PDMScorer]
+    MC --> SCORE
+    SCORE --> MET[无责任碰撞、可行驶区域<br/>行驶进度、TTC、舒适性等]
+    MET --> CSV[逐场景与平均分 CSV]

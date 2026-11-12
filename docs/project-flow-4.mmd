@@ -1,0 +1,16 @@
+flowchart TD
+    I[前时刻与当前 RGB + 导航命令] --> VI[Qwen 视觉编码器与多模态融合]
+    A[FAST 动作 token 序列] --> LM[Qwen 语言模型]
+    VI --> LM
+    LM --> HEAD[LM head]
+    HEAD --> CE[动作 token 交叉熵]
+    LM --> MASK[按 mask 提取前时刻<br/>图像 hidden 与动作 hidden]
+    MASK --> AD[ROSS 适配器<br/>归一化、MLP、网格恢复]
+    TARGET[当前 RGB：作为前时刻的未来目标] --> VAE[冻结的 SD VAE]
+    VAE --> Z[目标图像 latent]
+    Z --> NOISE[DDPM 加噪]
+    AD --> UNET[可训练 SD UNet]
+    NOISE --> UNET
+    UNET --> MSE[预测噪声或 velocity 的 MSE]
+    CE --> SUM[总损失]
+    MSE --> SUM

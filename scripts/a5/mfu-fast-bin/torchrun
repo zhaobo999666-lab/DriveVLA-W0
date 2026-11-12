@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Insert the compatibility entry only in the actual training workers.
+set -euo pipefail
+args=()
+for arg in "$@"; do
+  if [[ "$arg" == */utils/train_qwen_vla.py ]]; then
+    args+=("$ZB_ZERO2_COMPAT")
+  fi
+  args+=("$arg")
+done
+exec "$ZB_REAL_TORCHRUN" "${args[@]}"

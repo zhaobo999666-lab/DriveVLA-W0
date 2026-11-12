@@ -1,4 +1,28 @@
-# A55 + A56 双机 Qwen2.5-VL / Qwen3-VL + ROSS
+# A5 上运行 Qwen3-VL + ROSS 性能基线
+
+A55/A56 已释放。当前先用已准备好的 **A52、A53 或 A54 任意一台**建立单机 8 卡性能基线。A51 要先准备自己的容器和代码环境。以下保留原双机流程供后续扩展。
+
+在已分配给你且 8 卡空闲的 A52/A53/A54 **宿主机终端**执行：
+
+```bash
+bash /mnt/sfs_turbo/zhaobo/drivevla-w0/artifacts/code/mfu-benchmark-v2/benchmark-mfu.sh
+```
+
+命令使用 Qwen3-VL-8B + ROSS、已准备的 trainval 子集、每卡 batch 2（GBS=16），先跑单机 HCCL 和真实数据形状采样，再对 `safe`、`fast` 依次做 3 步冒烟和 50 步测量，每完成一档就保存报告。性能跑关闭 profiling 和模型保存。占用检查未通过或任一验收失败即停止。只跑稳定档可在命令前加 `ZB_MFU_PROFILE=safe`；只验证路径与配置可加 `--dry-run`。后续需要试更大的 batch，可在命令前加 `ZB_MBS=4`，每档都会重新冒烟。
+
+结果写到 `/mnt/sfs_turbo/zhaobo/drivevla-w0/artifacts/runs/mfu/<run-id>/summary.txt`。同一份报告给出稳定步时、估算 useful MFU、端到端 samples/s 和 rank 0 峰值 HBM。MFU 的 FLOPs 用真实训练数据加载器采样，按样本平均，分子仅算 Qwen3 文本和 ViT，峰值按假设的每卡 486 TFLOP/s。端到端数据取 Trainer 50 步总时长（含热身）；稳定步时含优化器，不含等数据的时间。优化归因时，同一台机器、同一批数据和 batch，每轮只改一个开关。
+
+### A54 的 ZeRO-2 兼容修复和 batch 爬坡
+
+在 A54，原版 `fast` 的 HCCL 正常，但 rank 7 在第一步梯度溢出检查中报 `aclnnAmax 561000`。训练日志验证了触发处是一个只有一个 BF16 元素、背后引用约 2.97 GB 梯度存储的视图。`mfu-benchmark-v2` 的 ZeRO-2 工作进程对这种视图直接做 `isfinite`；超大逻辑张量则分块检查。NaN/Inf 检测保留，容器安装的 DeepSpeed 不变。若要走备用方案，可用 `ZB_MFU_PROFILE=fast ZB_FAST_ZERO_STAGE=3`，保留 FA2 但使用无 CPU 卸载的 ZeRO-3；与 ZeRO-2 结果分开记录。
+
+稳定通过每卡 batch 2 后，可以用 `mfu-benchmark-v2/sweep-mfu.sh` 跑 8、16、24、27、32 的短测（也可用位置参数指定 batch 列表）。爬坡开启融合 gate/up；遇到确认的显存不足停止，取短测 MFU 最高的 batch 再跑 50 步确认。短测、失败日志及确认结果分别保存。
+
+A54 的原容器只有 16 GiB 私有 `/dev/shm`，batch 16 的 DataLoader 预取在这里报共享内存分配失败。已临时将该容器的私有 `/dev/shm` 调到 96 GiB。重建容器后应按实际大 batch 需求配置 `--shm-size` 并在容器内用 `df -h /dev/shm` 检查；不要把共享内存报错记作 NPU 显存不足。
+
+2026-11-11 A54 实测：修复后的 ZeRO-2、每卡 batch 2 完成 50 步，useful MFU **34.32%**（同 batch 的 `safe` 为 **8.74%**）。开启融合 gate/up 后，12 步短测（取第 6–12 步）中每卡 batch 8 / 16 / 24 / 27 / 32 分别为 **45.10% / 47.00% / 47.56% / 47.76% / 46.34%**。batch 27 短测最高，50 步确认因另一任务占用 A54、HCCL 端口绑定冲突而未开始。batch 24 峰值显存比 27 少约 5 GB、端到端吞吐近似，适合优先长跑。
+
+## 历史 A55 + A56 双机流程
 
 两台机器共享 `/mnt/sfs_turbo/zhaobo/drivevla-w0`，不需要重新下载权重或数据。训练脚本用静态 torchrun 会合，每台 8 个进程，共 16 个进程。
 
@@ -260,7 +284,7 @@ bash start-training.sh train  real50-q3 fast 2 qwen3vl
 
 ## 性能档位（对照 npu-port.zh-CN.md 附录，2026-11-10 增补）
 
-real50-04（2026-11-10）用的是 `safe` 基线：sdpa + ZeRO-3 双 offload + `--pin_memory false --num_workers 0`。它与 `npu-port.zh-CN.md` 的差异**不是跑错了**，而是手册有意"先保链路、后上性能"：real50-04 已验证 50 步双机训练、checkpoint 存取全部可用（loss 1.17~1.7，步时 4.31~4.36s，useful MFU 3.08%）。逐项对照：
+real50-04（2026-11-10）用 Qwen2.5-VL 的 `safe` 配置验证了 50 步双机训练和 checkpoint 存取。第 6–50 步 `step_time_full_s` 中位数 4.466 s，均值 4.646 s。早先的 3.08% 来自 Qwen3 解析器误读 Qwen2.5 配置，不能作为 MFU；两次 ROSS 计数也未完成。建立优化基线请用本文顶部的 Qwen3 单机命令。历史配置对照：
 
 | npu-port 附录最佳点 | real50-04 实际 | 处置 |
 | --- | --- | --- |
@@ -268,7 +292,7 @@ real50-04（2026-11-10）用的是 `safe` 基线：sdpa + ZeRO-3 双 offload + `
 | ZeRO-2（无每步参数 all-gather） | ZeRO-3 + optimizer/param 双 offload CPU | fast 档已切 zero2.json |
 | pinned loader + memlock | pin false + workers 0 | fast 档已开 pin true + workers 2（容器 memlock 受限时回退 false） |
 | 融合 RMSNorm+RoPE、valid CE、expandable segments、CPU 亲和性 | 相同（脚本默认已启用） | 不变 |
-| 融合 gate/up | DriveVLA-W0 未移植该开关 | 不适用 |
+| 融合 gate/up | Qwen3 代码支持 `ROSS_FUSED_GATEUP` | 初始基线关闭，后续可单独对照 |
 | 单卡 bs 24–27（8B ROSS） | bs 2（7B+SD1.5） | fast 档冒烟通过后逐步爬坡 |
 
 启动器支持第三个参数选档、第四个参数调每卡 batch：
@@ -294,7 +318,7 @@ bash start-training.sh train real50-06 fast 4
 1. 先跑 `fast` 档 bs 2 的 50 步（real50-05），与 real50-04 对比步时（期望 fa2 + ZeRO-2 明显低于 4.35s）与 loss 曲线（两条曲线应基本重合，验证 fa2 数值无回归）。
 2. bs 爬坡阶梯 4 → 8 → 12；出现 OOM 或步时方差变大就停在上一档。npu-port 的经验：ZeRO-2 下加大 batch 是免费的收益，本项目的爬坡上限需实测。
 3. `pin_memory true` 若触发容器 pinned-host-memory 报错（脚本帮助注明 false 就是为绕开它），说明 `ulimit -l unlimited` 在容器内未生效——改回 safe 档或让管理员调容器 memlock，不要硬试。
-4. 融合 gate/up、SwiGLU、QKV 等开关在 DriveVLA-W0 代码里不存在，等上游移植后再评估，不要手改。
+4. Qwen3 已有 `ROSS_FUSED_GATEUP` 和 `ROSS_FUSED_QKV` 开关，初始基线均关闭。若单独测试，确认变量传到了容器内，并固定其余配置。
 
 ## 单机模式（8 卡，nodes=1）
 
@@ -304,7 +328,7 @@ bash start-training.sh train real50-06 fast 4
 # 单机逐级验收（fa2 + ZeRO-2 = npu-port 最佳点口径）
 bash start-training.sh check  comm-s1  fast 2  qwen3vl 1
 bash start-training.sh smoke  smoke-s1 fast 2  qwen3vl 1
-bash start-training.sh train  real50-s1 fast 24 qwen3vl 1   # 单机 bs24 = npu-port 最佳点
+bash start-training.sh train  real50-s1 fast 2  qwen3vl 1   # 普通训练会保存；测性能用本文顶部命令
 ```
 
 单机模式的行为差异：
@@ -313,7 +337,7 @@ bash start-training.sh train  real50-s1 fast 24 qwen3vl 1   # 单机 bs24 = npu-
 - run ID 查重与 fast 档 check/smoke 门禁都只看本机日志。
 - 训练输出与双机共用 `artifacts/runs/a55-a56/train-<id>/`（共享盘），日志文件名带 `n1` 后缀。
 
-单机/双机的对照意义：单机是**无跨机通信的上界参考**（同配置下单机步时优于双机）；排障时也可以先单机复现问题，再上双机定位是否为跨机链路问题。注意 npu-port 的 48.4% 是**他们数据集**（L≈1774）的数字，我们数据集是 L≈2330（见下节实测），MFU 不能直接对标，只能用我们自己的基线对比。`utils/flops_mindspeed.py` 在单机结果上用 `--gbs 192 --device_num 8`（bs24 时），其余口径与下文完全一致。
+单机可作为无跨机通信的参考。排障时可先单机复现，再上双机定位跨机链路。npu-port 的 48.4% 对应特定数据与计时口径，自己的基线以 `summary.txt` 为准。单机每卡 batch 2 时全局 batch 为 16；切到双机并保持每卡 batch 不变时全局 batch 为 32。
 
 ## Qwen3-VL-8B 双机训练（MFU 对照主路线）
 
@@ -340,8 +364,8 @@ SD1.5（ROSS 头）已在 `/work/zhaobo/models/stable-diffusion-v1-5`，无需�
 bash start-training.sh check  comm03 fast  2  qwen3vl
 bash start-training.sh smoke  smoke03 fast  2  qwen3vl
 
-# 对标单机最佳点：每卡 bs 24（全局 batch 384），50 步
-bash start-training.sh train  real50-q3 fast 24 qwen3vl
+# 双机起步：每卡 bs 2（全局 batch 32），50 步
+bash start-training.sh train  real50-q3 fast 2 qwen3vl
 ```
 
 启动前若尚未下载权重会直接被拦；`fast` 档的 train 会强制要求先通过同档 check + smoke。
@@ -350,104 +374,21 @@ bash start-training.sh train  real50-q3 fast 24 qwen3vl
 
 | npu-port 最佳点配置 | 双机启动器落点 |
 | --- | --- |
-| `--max_pixels 903168` | `qwen3vl` 档自动带上（**注意**：同样的 max_pixels 下我们的图是 1920×1080 → 每图 4500 ViT tokens / L≈2330，他们的数据是每图 3432 / L≈1774，token 量不同） |
+| `--max_pixels 903168` | `qwen3vl` 档自动带上。实际序列长度受原图尺寸及训练模板影响，以本次 `shapes.json` 为准 |
 | `--attn_type fa2` | `fast` 档自动带上 |
 | ZeRO-2（`zero2.json`，无 offload） | `fast` 档自动带上 |
 | valid CE、融合 RMSNorm+RoPE、expandable segments、CPU 亲和性 | 启动器默认（与 npu-port 保留清单一致） |
-| 每卡 bs 24–27（bs28 OOM，75.2 GB 峰值） | `train real50-q3 fast 24 qwen3vl` 起步 |
+| 参考文档的每卡 bs 24–27 | 本项目从每卡 2 起步，逐档冒烟并记录峰值 HBM |
 | ROSS SD1.5 头 | 固定 `--sd_model_path` |
 
-注意两点：一是**全局 batch 从单机 192 变为 384**，50 步性能对照不受影响，但如果要看 loss 曲线与单机完全重合，需把 LR 相应调整或接受轻微偏移；二是我们的序列比 npu-port 长约 30%，同 bs 步时会比他们长、显存占用略高，bs 24 起步若 OOM 就从 16/12 往下退，不要假设他们的 75.2 GB 峰值可以直接套用。
+固定每卡 batch 比较 8 卡和 16 卡时，全局 batch 会翻倍，应用吞吐和扩展效率衡量；不要要求 loss 曲线逐步重合。换 batch、节点数或数据集后，先以目标配置冒烟，再跑正式测量。原启动器的 fast 门禁只检查历史日志中的档位，不保证目标 batch 已通过。
 
-## 训练完成后：utils/flops_mindspeed.py 计算 MFU
+## 如何读 MFU 报告
 
-该脚本 = MindSpeed-MM 解析法（text + ViT）+ ROSS 头实测项，是**生态可比口径**。Qwen3-VL-8B 是它的原生支持模型（不再有 Qwen2.5 config 被误解析的问题）。
-
-### 1. 取输入参数
-
-```bash
-# 步时：取稳定窗口的 median step_time_s（跳过 dataloader epoch 边界的单步尖峰）
-grep -oE '"step_time_s": [0-9.]+' \
-  /mnt/sfs_turbo/zhaobo/drivevla-w0/artifacts/runs/a55-a56/train-real50-q3/navsim/trainer_state.json \
-  | awk '{print $2}' | sort -n | awk '{a[NR]=$1} END{print "median:", a[int((NR+1)/2)], "n:", NR}'
-```
-
-`gbs` = 全局每步样本数 = 节点数 × 8 × 每卡 bs：双机 bs24 → gbs=384、`device_num=16`；单机 bs24 → gbs=192、`device_num=8`（即 npu-port 附录的原口径）。
-
-### 1.5 先测我们自己的 seqlens（必做，不能照抄 npu-port）
-
-`--llm_seqlens / --vit_seqlens` 是 FLOPs 公式里 L² 项和 token 项的输入，**必须用本数据集实测值**。npu-port 的 1774 / 3432 是他们 trainval 数据的形状，我们的 mini 数据是 1920×1080 全分辨率，token 量不同（约 1.3×）。实测方法（容器内有 torch，processor 可直接用）：
-
-```bash
-# 在容器内执行；打印 LLM 序列长度与每图 ViT token 数的中位数
-python - <<'PY'
-import pickle, os, statistics
-import numpy as np
-from transformers import AutoProcessor
-
-D = '/work/zhaobo/data/prepared/train.pkl'
-ROOT = '/work/zhaobo/data/raw-camera/openscene-v1.1/sensor_blobs/mini'
-d = pickle.load(open(D, 'rb'))
-proc = AutoProcessor.from_pretrained('/work/zhaobo/models/Qwen3-VL-8B-Instruct',
-                                     max_pixels=903168, min_pixels=28224)
-
-def to_jpg(name):                      # pickle 里的 .npy 名 → 实际 jpg（见 data_qwen_vla._construct_image_path）
-    p = name.split('/')
-    return os.path.join(ROOT, p[-2], 'CAM_F0', p[-1][:-4] + '.jpg')
-
-idx = np.random.RandomState(0).choice(len(d), 50, replace=False)
-llm, vit = [], []
-for i in idx:
-    s = d[i]
-    imgs = [to_jpg(s['image'][0]), to_jpg(s['pre_1s_image'][0])]   # 每样本只有 2 图进模型
-    out = proc.apply_chat_template(
-        [[{'role': 'user', 'content': [{'type': 'image'} for _ in imgs] + [{'type': 'text', 'text': s['text'][0]}]}]],
-        add_generation_prompt=True, tokenize=True, return_dict=True)
-    llm.append(int(out['input_ids'].shape[-1]))
-    vit.append(int(out['image_grid_thw'].prod().item()) // 2)      # 每图 ViT patch 数
-print('llm_seqlens median =', int(np.median(llm)))
-print('vit_seqlens/image median =', int(np.median(vit)))
-PY
-```
-
-**本数据集实测结果（2026-11-10，max_pixels 903168）**：`llm_seqlens ≈ 2330`（2 图 ≈ 2250 合并视觉 token + 指令 24 + 模板），`vit_seqlens ≈ 4500`/图（1920×1080 → smart_resize 1260×700）。数据集换了（重新 prepare、换 split、改 `--max_pixels`）就必须重测。
-
-### 2. 计算（在任一节点的容器内执行）
-
-```bash
-docker exec -it zhaobo-drivevla-a52 bash
-cd /work/zhaobo/code/DriveVLA-W0
-
-python utils/flops_mindspeed.py \
-  --hf_path /work/zhaobo/models/Qwen3-VL-8B-Instruct \
-  --llm_seqlens 2330 --vit_seqlens 4500 4500 \
-  --gbs 384 --device_num 16 \
-  --step_time <上一步的 median> \
-  --hardware_flops 486e12 \
-  --sd_path /work/zhaobo/models/stable-diffusion-v1-5 \
-  --include_recompute
-```
-
-（`--llm_seqlens` 填上一步实测中位数；`--vit_seqlens` 每图一个值，2 图就写两遍。单机时 `--gbs 192 --device_num 8`。）
-
-输出四个数：`useful MFU`（有效 FLOPs 口径）、`executed incl. recompute MFU`（计入 checkpoint 重算的执行口径）、`MFU delta`、ROSS 项实测 FLOPs。
-
-### 3. 口径与预期
-
-| 口径 | npu-port 单机参考（他们的数据） | 我们双机预期 |
-| --- | --- | --- |
-| MindSpeed useful | 48.4% @486TF（L≈1774、ViT 2×3432） | 同口径对比请看**我们自己的基线**，不要直接对 48.4%：我们 L≈2330、ViT 2×4500，注意文本 attention 的 L² 项和 ViT token 项都更大，每步 FLOPs 约 1.3–1.5×，步时同比更长 |
-| MindSpeed executed（含重算） | 62.19%（bs27） | 同比例放大；同样以自己基线为准 |
-| ROSS 项 | 2.4355e12 FLOPs/sample（占 ~1%） | 可忽略 |
-
-四个注意：
-
-1. **对比只在同口径内有效**：`useful` 对 `useful`，`executed` 对 `executed`；486 TFLOPS 是假设峰值，只影响绝对值、不影响 fast/safe 之间的相对结论。跨项目引用 npu-port 的 48.4% 时必须同时说明 seqlens 不同，否则是把不同形状的 MFU 直接相减。
-2. **seqlens 决定一切**：`--llm_seqlens`/`--vit_seqlens` 差一倍，MFU 就差近一倍（L² 项）。本 runbook 的 2330/4500 是本数据集实测值；换数据集或改 `--max_pixels` 必须重跑 1.5 节的测量。
-3. **ROSS 实测项崩溃时**：`measure_ross_flops` 在 NPU 上偶发 `ERR99999`（vendored UNet 初始化问题），此时加 `--no_ross` 重跑——该项只占 ~1%，不影响结论；或用 cpu-math 变体。
-4. **加速比优先看步时**：优化验收的第一判据是同 bs 下 `step_time_s` 的中位数下降，MFU 只作为跨配置/跨项目换算的辅助指标。
-
-
+- `summary.txt` 用稳定步第 6–50 步的 `step_time_full_s` **均值**换算 useful MFU，同时给出中位数以观察典型步时。训练器在优化器更新前打点，原始 JSON 的步号从 0 开始。
+- `shapes.json` 记录实际训练数据加载器采样的 32 条样本：LLM 用有效 token 数，ViT 对每张图单独算 T×H×W。先对每条样本算 FLOPs，再平均，避免用单个中位序列长度代入注意力的平方项。换数据或图像尺寸必须重测。
+- 端到端吞吐按全局样本数除以 Trainer 的训练总时长，包含热身和等数据的耗时。初始 A/B 固定节点、数据和 batch；`safe` 到 `fast` 是多项配置的整体收益。
+- `npu-port.zh-CN.md` 的 48.4% 来自另一个数据形状和计时口径，只作参考。本文报告的 useful MFU 只计 Qwen3 文本和 ViT，未计 ROSS 和重计算；486 TFLOP/s 是每卡假设峰值。带 ROSS 的结果需单独列，不能与骨干口径混用。
 
 ## 1. 复用 A55 已验收的镜像
 

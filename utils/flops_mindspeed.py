@@ -30,6 +30,7 @@ patch tokens; ``--gbs`` is the number of samples and the result is divided by
 """
 
 import argparse
+from copy import copy
 
 from transformers import PretrainedConfig
 
@@ -88,7 +89,8 @@ class Qwen3VLFlopsCounter:
         return attn_linear_N, mlp_N, lm_head_N, head_dim, num_attention_heads
 
     @staticmethod
-    def _estimate_text_flops(config, tokens_sum, batch_seqlens, include_recompute=False):
+    def _estimate_text_flops(config, tokens_sum, batch_seqlens, include_recompute=False,
+                             gc_skip_text_last=0):
         attn_linear_N, mlp_N, lm_head_N, head_dim, num_attention_heads = (
             Qwen3VLFlopsCounter._text_linear_components(config)
         )
@@ -103,8 +105,11 @@ class Qwen3VLFlopsCounter:
         if include_recompute:
             # Gradient checkpointing re-runs each decoder block's forward once.
             # The LM head sits outside the checkpointed blocks and is not rerun.
-            total += 2 * (attn_linear_N + mlp_N) * tokens_sum
-            total += 2 * seqlen_square_sum * head_dim * num_attention_heads * config.num_hidden_layers
+            replay_config = copy(config)
+            replay_config.num_hidden_layers = max(0, config.num_hidden_layers - gc_skip_text_last)
+            replay_attn, replay_mlp, *_ = Qwen3VLFlopsCounter._text_linear_components(replay_config)
+            total += 2 * (replay_attn + replay_mlp) * tokens_sum
+            total += 2 * seqlen_square_sum * head_dim * num_attention_heads * replay_config.num_hidden_layers
         return total
 
     @staticmethod
@@ -153,7 +158,8 @@ class Qwen3VLFlopsCounter:
     def _estimate_qwen3_vl_flops(self, tokens_sum, batch_seqlens, **kwargs):
         include_recompute = kwargs.get("include_recompute", False)
         text_flops = self._estimate_text_flops(
-            self.config.text_config, tokens_sum, batch_seqlens, include_recompute=include_recompute
+            self.config.text_config, tokens_sum, batch_seqlens, include_recompute=include_recompute,
+            gc_skip_text_last=kwargs.get("gc_skip_text_last", 0),
         )
         images_seqlens = kwargs.get("images_seqlens")
         vit_flops = (
@@ -202,14 +208,18 @@ def _measure_forward_flops(module, call, dense_coeff, attn_coeff):
 
     def attn_hook(m, args, kwargs, output):
         hidden = args[0] if args and torch.is_tensor(args[0]) else kwargs.get("hidden_states")
-        if hidden is None or not torch.is_tensor(hidden) or hidden.dim() != 3:
+        if hidden is None or not torch.is_tensor(hidden) or hidden.dim() not in (3, 4):
             return
-        b, lq, c = hidden.shape
+        if hidden.dim() == 4:  # The VAE mid-block can pass [B, C, H, W].
+            b, c, h, w = hidden.shape
+            lq = h * w
+        else:
+            b, lq, c = hidden.shape
         heads = getattr(m, "heads", None)
         if not heads:
             return
-        head_dim = c // int(heads)
-        enc = kwargs.get("encoder_hidden_states")
+        head_dim = getattr(getattr(m, "to_q", None), "out_features", c) // int(heads)
+        enc = kwargs.get("encoder_hidden_states", args[1] if len(args) > 1 else None)
         lk = enc.shape[1] if torch.is_tensor(enc) else lq
         attn[0] += 4.0 * b * int(heads) * lq * lk * head_dim
 
@@ -294,12 +304,16 @@ def get_args():
                    help="exclude the ROSS SD UNet + VAE (stock Qwen3-VL scope)")
     p.add_argument("--include_recompute", action="store_true",
                    help="also report MFU counting the extra forward pass gradient checkpointing runs")
+    p.add_argument("--gc-skip-text-last", type=int, default=0,
+                   help="exclude the last N text layers from checkpoint replay")
     p.add_argument("--latent_hw", type=int, nargs=2, default=[35, 63])
     return p.parse_args()
 
 
 def main():
     args = get_args()
+    if args.gc_skip_text_last < 0:
+        raise ValueError("--gc-skip-text-last must be nonnegative")
     # AutoConfig does not know qwen3_vl in our vendored 4.56 tree; use the
     # vendored config class directly.
     from transformers.models.qwen3_vl.configuration_qwen3_vl import Qwen3VLConfig
@@ -331,6 +345,7 @@ def main():
             images_seqlens=args.vit_seqlens,
             vit_freeze=args.vit_freeze,
             include_recompute=True,
+            gc_skip_text_last=args.gc_skip_text_last,
             step_time=1.0,
         )
         print(f"recompute FLOPs per sample: {executed - useful:.4e}")

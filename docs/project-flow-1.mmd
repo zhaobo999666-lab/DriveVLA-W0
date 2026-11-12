@@ -1,0 +1,30 @@
+flowchart TD
+    N[NuPlan 长序列图像与位姿] --> NP[tools/pickle_gen/nuplan_pickle_gen<br/>分段、动作、命令、归一化]
+    S[NAVSIM 图像、日志与场景划分] --> SP[tools/pickle_gen<br/>当前及前1秒窗口]
+    N --> VQ[Emu3 VisionTokenizer<br/>RGB 转 VQ npy]
+    S --> VQ
+    NP --> PKL[训练或测试 pickle]
+    SP --> PKL
+    VQ --> ED[utils/datasets.py<br/>Emu3 数据集]
+    PKL --> ED
+    FAST[configs/fast<br/>FAST 动作编解码] --> ED
+    ED --> PRE[NuPlan 多 VA 世界模型预训练]
+    PRE --> CK[预训练 checkpoint]
+    CK --> FT[NAVSIM 下游训练<br/>基础 AR / AR 专家 / FM / Query]
+    ED --> FT
+    PKL --> QD[qwenvl/dataset<br/>原始 RGB 与动作样本]
+    S --> QD
+    N --> QD
+    FAST --> QD
+    QD --> QT[Qwen2.5/3-VL + ROSS 训练]
+    SD[SD VAE、UNet、Scheduler 权重] --> QT
+    FT --> IC[模型 checkpoint]
+    QT --> IC
+    IC --> INF[inference/vla 或 inference/qwen<br/>动作推理]
+    PKL --> INF
+    INF --> DN[动作解码与反归一化]
+    DN --> JSON[每个 scene token 的动作 JSON]
+    JSON --> AG[EmuVLAAgent<br/>增量累积或直接采用 Anchor 轨迹]
+    CACHE[场景、地图与 Metric Cache] --> PDM[NAVSIM 仿真与 PDMS 评分]
+    AG --> PDM
+    PDM --> OUT[CSV 子指标、总分与轨迹图]
