@@ -22,6 +22,8 @@ from torch.utils.data import SequentialSampler, RandomSampler
 
 from utils.flops import FlopsCounter
 from utils.flops_zhao import FlopsCounterZhao
+from utils.projection_mfu import ProjectionAudit, save_rank_records
+from utils.fa2_unpad_cache import FlashUnpadCache
 
 try:  # PyTorch's dispatch-level counter, for the independent forward cross-check
     from torch.utils.flop_counter import FlopCounterMode
@@ -236,13 +238,23 @@ class OptimizerTimingCallback(TrainerCallback):
 
     def __init__(self):
         self.last_optimizer_s = 0.0
+        self.wall_records = [] if os.getenv("ROSS_MFU_STEP_WALL") == "1" else None
+        self._prev_end = None
+        self.batch_shapes = None
 
     def on_pre_optimizer_step(self, args, state, control, **kwargs):
         self._t0 = time.perf_counter()
 
     def on_step_end(self, args, state, control, **kwargs):
         device_synchronize()  # count completed optimizer work, not enqueue time
-        self.last_optimizer_s = time.perf_counter() - self._t0
+        done = time.perf_counter()
+        self.last_optimizer_s = done - self._t0
+        if self.wall_records is not None:
+            if self._prev_end is not None:
+                self.wall_records.append({
+                    "step": state.global_step, "wall_s": done - self._prev_end, "shapes": self.batch_shapes,
+                })
+            self._prev_end = done
 
 
 class RossTrainer(Trainer):
@@ -261,6 +273,17 @@ class RossTrainer(Trainer):
         # Independent Linear-only counter, Zhao's MFU convention (utils/flops_zhao.py).
         self._zhao = FlopsCounterZhao() if os.getenv("ROSS_COUNT_FLOPS", "0") == "1" else None
         self._last_zhao = None
+        self._fa2_cache = os.getenv("ROSS_FA2_UNPAD_CACHE") == "1"
+        self._fa2_markers = os.getenv("ROSS_FA2_UNPAD_MARKERS") == "1"
+        self._fa2_stats = os.getenv("ROSS_FA2_UNPAD_STATS") == "1"
+        self._fa2_hits = self._fa2_builds = 0
+        if (self._fa2_cache or self._fa2_markers or self._fa2_stats) and self.args.torch_compile:
+            raise ValueError("FA2 unpadding experiment requires torch_compile=False")
+        self._projection_audit = ProjectionAudit() if os.getenv("ROSS_PROJECTION_AUDIT") == "1" else None
+        if self._projection_audit is not None:
+            gc_kwargs = self.args.gradient_checkpointing_kwargs or {}
+            if self.args.gradient_accumulation_steps != 1 or not gc_kwargs.get("use_reentrant", True):
+                raise ValueError("Projection audit requires gradient accumulation 1 and reentrant checkpoints")
         # PyTorch's own counter, for an independent check of the forward count.
         # Note: on torch_npu 2.11 the backward is invisible to it (npu:: kernels).
         self._torch_flops = (
@@ -327,6 +350,13 @@ class RossTrainer(Trainer):
             if not self._zhao.attached:
                 self._zhao.attach(self.accelerator.unwrap_model(model))
             self._zhao.reset()
+        audit = self._projection_audit
+        if audit is not None and model.training:
+            if not audit.attached:
+                audit.attach(self.accelerator.unwrap_model(model))
+            audit.begin_forward()
+        else:
+            audit = None
 
         if self._torch_flops:
             with FlopCounterMode(display=False) as mode:
@@ -350,6 +380,8 @@ class RossTrainer(Trainer):
             self._flops.accumulate()
         if self._zhao is not None:
             self._last_zhao = self._zhao.snapshot()
+        if audit is not None:
+            audit.end_forward()
         return loss
 
     def training_step(self, model, inputs, num_items_in_batch=None):
@@ -357,6 +389,11 @@ class RossTrainer(Trainer):
         _ids = inputs.get("input_ids") if isinstance(inputs, dict) else None
         if isinstance(_ids, torch.Tensor) and _ids.dim() >= 2:
             seq_len = int(_ids.shape[-1])
+        if self._opt_timer is not None and self._opt_timer.wall_records is not None:
+            self._opt_timer.batch_shapes = {
+                k: list(inputs[k].shape) for k in ("input_ids", "pixel_values", "image_grid_thw")
+                if isinstance(inputs.get(k), torch.Tensor)
+            }
 
         # Data hash logging — compute BEFORE forward (the model can mutate inputs)
         # PRECISION_ALIGNMENT.md Phase 4.1: diff hash files across NPU vs GPU
@@ -370,7 +407,17 @@ class RossTrainer(Trainer):
             self._hash_logfile.flush()  # survive crashes
 
         t0 = time.perf_counter() if _STEP_TIMING else None
-        loss = super().training_step(model, inputs, num_items_in_batch)
+        if self._fa2_cache or self._fa2_markers or self._fa2_stats:
+            from reference.transformers.src.transformers import modeling_flash_attention_utils as flash_utils
+
+            with FlashUnpadCache(flash_utils, enabled=self._fa2_cache, markers=self._fa2_markers) as unpad:
+                loss = super().training_step(model, inputs, num_items_in_batch)
+            self._fa2_hits += unpad.hits
+            self._fa2_builds += unpad.builds
+        else:
+            loss = super().training_step(model, inputs, num_items_in_batch)
+        if self._projection_audit is not None:
+            self._projection_audit.end_step(self.state.global_step, _ids.shape[0])
 
         # 累积 forward 写入的 _last_logs
         logs = getattr(model, "_last_logs", None)
@@ -472,7 +519,12 @@ class NpuProfilerCallback(TrainerCallback):
     def _build(self):
         import torch_npu
 
-        schedule = torch_npu.profiler.schedule(wait=1, warmup=1, active=1, repeat=1, skip_first=26)
+        full_steps = int(os.getenv("ROSS_PROFILE_FULL_STEPS", "0"))
+        if full_steps < 0:
+            raise ValueError("ROSS_PROFILE_FULL_STEPS cannot be negative")
+        schedule = (torch_npu.profiler.schedule(wait=0, warmup=0, active=full_steps, repeat=1)
+                    if full_steps else
+                    torch_npu.profiler.schedule(wait=1, warmup=1, active=1, repeat=1, skip_first=26))
         trace = torch_npu.profiler.tensorboard_trace_handler(self._trace_dir)
         if self._level == 1:
             return torch_npu.profiler.profile(
@@ -485,7 +537,8 @@ class NpuProfilerCallback(TrainerCallback):
                 profile_memory=False,
                 schedule=schedule,
                 experimental_config=torch_npu.profiler._ExperimentalConfig(
-                    profiler_level=torch_npu.profiler.ProfilerLevel.Level1
+                    profiler_level=torch_npu.profiler.ProfilerLevel.Level1,
+                    **({"export_type": torch_npu.profiler.ExportType.Db} if full_steps else {}),
                 ),
                 on_trace_ready=trace,
             )
@@ -842,8 +895,21 @@ def train():
         rank0_print("Starting training from scratch...")
         trainer.train()
 
+    if trainer._projection_audit is not None:
+        trainer._projection_audit.save(training_args.output_dir)
+    if trainer._opt_timer is not None and trainer._opt_timer.wall_records is not None:
+        save_rank_records(training_args.output_dir, "step-wall", trainer._opt_timer.wall_records)
+    if trainer._fa2_cache or trainer._fa2_markers or trainer._fa2_stats:
+        save_rank_records(training_args.output_dir, "fa2-unpad", {
+            "cache": trainer._fa2_cache, "builds": trainer._fa2_builds, "hits": trainer._fa2_hits,
+        })
+        rank0_print(f"[fa2-unpad] cache={int(trainer._fa2_cache)} "
+                    f"rank0 builds={trainer._fa2_builds} hits={trainer._fa2_hits}")
     if _device_type == "npu":
-        rank0_print(f"[mem] peak HBM allocated (rank0): {torch.npu.max_memory_allocated() / 1e9:.1f} GB")
+        peak = torch.npu.max_memory_allocated()
+        if trainer._opt_timer is not None and trainer._opt_timer.wall_records is not None:
+            save_rank_records(training_args.output_dir, "peak-memory", {"max_allocated_bytes": peak})
+        rank0_print(f"[mem] peak HBM allocated (rank0): {peak / 1e9:.1f} GB")
 
     if trainer._flops is not None:
         total = trainer._flops.cumulative

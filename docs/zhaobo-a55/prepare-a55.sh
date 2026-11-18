@@ -83,7 +83,7 @@ if [[ $MODE == environment ]]; then
     mounts+=(--mount "type=bind,src=$SHARED/$dir,dst=$WORK/$dir")
   done
   if ! docker container inspect "$BOX" >/dev/null 2>&1; then
-    docker run -d --name "$BOX" --label owner=zhaobo --network host --shm-size=16g \
+    docker run -d --name "$BOX" --label owner=zhaobo --network host --shm-size=64g \
       --ulimit memlock=-1:-1 --ulimit stack=67108864 "${devices[@]}" "${mounts[@]}" \
       --mount type=bind,src=/usr/local/Ascend/driver,dst=/usr/local/Ascend/driver,readonly \
       --mount type=bind,src=/usr/local/Ascend/firmware,dst=/usr/local/Ascend/firmware \

@@ -52,7 +52,9 @@ SHARED=/mnt/sfs_turbo/zhaobo/drivevla-w0
 HOST="/data1/zhaobo/drivevla-w0-$NODE"
 BOX="zhaobo-drivevla-$NODE"
 IMAGE=zhaobo/drivevla-w0:a55-cann9.2-torch2.11-py312-v1
-RELEASE="$SHARED/artifacts/code/a55-a56"
+RELEASE=${ZB_RELEASE_DIR:-"$SHARED/artifacts/code/a55-a56"}
+[[ "$RELEASE" == "$SHARED/"* ]] || die "ZB_RELEASE_DIR must be under $SHARED"
+RELEASE_BOX="/work/zhaobo/${RELEASE#"$SHARED/"}"
 EXPORT="$SHARED/artifacts/images/a55-qwen-v1"
 REPO="$HOST/code/DriveVLA-W0"
 # release 目录里记录「这份副本来自哪个提交」，由 publish 写入；缺失时退回初始部署的提交
@@ -317,7 +319,8 @@ case "$MODE" in
       die "NPU busy on $NODE: $busy/8 devices hold >2 GB HBM (another job, e.g. vLLM, is resident); wait or coordinate"
     fi
     mkdir -p "$HOST/runs/a55-a56"
-    docker exec -i "$BOX" bash --noprofile --norc -e -s -- \
+    docker exec -i -e ZB_RELEASE_BOX="$RELEASE_BOX" "$BOX" \
+      bash --noprofile --norc -e -s -- \
       "$MODE" "$RUN_ID" "$NODE_RANK" "$MASTER_ADDR" "$port" "$HCCL_IP" "$PROFILE" "$BATCH" \
       "$NODE" "$MODE" "$MODEL" "$NODES" "${ZB_DATA:-}" "${ZB_DATA_ROOT:-}" <<'INSIDE' \
       2>&1 | tee -a "$HOST/runs/a55-a56/$MODE-$RUN_ID-$PROFILE-$MODEL-b$BATCH-n$NODES.log"
@@ -325,7 +328,7 @@ mode=$1 run_id=$2 rank=$3 master=$4 port=$5 hccl_ip=$6 profile=$7 batch=$8 node=
 source /work/zhaobo/bootstrap/enter-env.sh
 export ASCEND_RT_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 export HCCL_SOCKET_IFNAME=enp39s0f3 HCCL_IF_IP="$hccl_ip" HCCL_CONNECT_TIMEOUT=120
-release=/work/zhaobo/artifacts/code/a55-a56
+release=${ZB_RELEASE_BOX:?}
 if [[ "$mode" == check ]]; then
   mkdir -p /work/zhaobo/runs/a55-a56
   torchrun --nnodes="$nodes" --nproc_per_node=8 --node_rank="$rank" \

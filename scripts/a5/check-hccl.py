@@ -1,4 +1,4 @@
-"""Verify one HCCL collective across all NPU ranks (8 = single node, 16 = two)."""
+"""Verify one HCCL collective across all NPU ranks (8/16/32)."""
 
 import os
 from datetime import timedelta
@@ -12,8 +12,10 @@ def main():
     local_rank = int(os.environ["LOCAL_RANK"])
     rank = int(os.environ["RANK"])
     world_size = int(os.environ["WORLD_SIZE"])
-    if world_size not in (8, 16):
-        raise RuntimeError(f"Expected 8 ranks (one node) or 16 ranks (two nodes), got {world_size}")
+    if world_size not in (8, 16, 32):
+        raise RuntimeError(
+            f"Expected 8 ranks (one node), 16 ranks (two nodes), or 32 ranks (four nodes), got {world_size}"
+        )
     expected_sum = world_size * (world_size + 1) // 2
     torch.npu.set_device(local_rank)
     dist.init_process_group("hccl", timeout=timedelta(seconds=180))

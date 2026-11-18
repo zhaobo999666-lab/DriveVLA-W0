@@ -315,7 +315,10 @@ if [ "$DEVICE" = "npu" ]; then
   # Canonical NPU runtime env — keep this block authoritative. Ad-hoc launches
   # that miss any of these produce misleading numbers (npu-port.md Steps 23-35).
   export INF_NAN_MODE_ENABLE=1
-  export HCCL_DETERMINISTIC=TRUE
+  # Keep deterministic collectives as the default, but allow a benchmark to
+  # override it explicitly.  The resolved value is recorded by the launcher.
+  : "${HCCL_DETERMINISTIC:=TRUE}"
+  export HCCL_DETERMINISTIC
   export CPU_AFFINITY_CONF=1              # ~5x lower step-time variance (Step 23)
   export ASCEND_LAUNCH_BLOCKING=0
   # HBM allocator: without expandable segments, large backward allocations
